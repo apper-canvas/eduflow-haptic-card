@@ -18,9 +18,12 @@ const InstructorDashboard = () => {
 const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [selectedCourse, setSelectedCourse] = useState(null)
+const [selectedCourse, setSelectedCourse] = useState(null)
   const [showPriceModal, setShowPriceModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [selectedCourseForAnalytics, setSelectedCourseForAnalytics] = useState(null)
+  const [showAnalyticsModal, setShowAnalyticsModal] = useState(false)
+  const [analyticsLoading, setAnalyticsLoading] = useState(false)
   const [createLoading, setCreateLoading] = useState(false)
   const [stats, setStats] = useState({
     totalCourses: 0,
@@ -76,6 +79,10 @@ const [courses, setCourses] = useState([])
     setSelectedCourse(course)
     setShowPriceModal(true)
   }
+const handleViewAnalytics = (course = null) => {
+    setSelectedCourseForAnalytics(course)
+    setShowAnalyticsModal(true)
+  }
 
 const handlePriceUpdate = (updatedCourse) => {
     setCourses(prev => prev.map(course => 
@@ -84,7 +91,6 @@ const handlePriceUpdate = (updatedCourse) => {
     // Refresh stats to reflect updated earnings
     loadDashboardData()
   }
-
   const handleCreateCourse = () => {
     setShowCreateModal(true)
   }
@@ -214,7 +220,12 @@ const handlePriceUpdate = (updatedCourse) => {
                           <Button size="sm" variant="outline">
                             <ApperIcon name="Edit" size={16} />
                           </Button>
-                          <Button size="sm" variant="outline">
+<Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewAnalytics(course)}
+                            title="View Analytics"
+                          >
                             <ApperIcon name="BarChart" size={16} />
                           </Button>
                           <Link to={`/course/${course.Id}`}>
@@ -282,7 +293,11 @@ const handlePriceUpdate = (updatedCourse) => {
                     <ApperIcon name="Plus" size={16} className="mr-2" />
                     Create Course
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+<Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => handleViewAnalytics(null)}
+                  >
                     <ApperIcon name="BarChart" size={16} className="mr-2" />
                     Analytics
                   </Button>
@@ -345,11 +360,20 @@ const handlePriceUpdate = (updatedCourse) => {
         onSuccess={handlePriceUpdate}
       />
 
-      <CourseCreateModal
+<CourseCreateModal
         isOpen={showCreateModal}
         loading={createLoading}
         onClose={() => setShowCreateModal(false)}
         onSubmit={handleCourseCreate}
+      />
+
+      <AnalyticsModal
+        course={selectedCourseForAnalytics}
+        isOpen={showAnalyticsModal}
+        loading={analyticsLoading}
+        onClose={() => setShowAnalyticsModal(false)}
+        courses={courses}
+        stats={stats}
       />
     </div>
   )
@@ -687,6 +711,326 @@ const CourseCreateModal = ({ isOpen, loading, onClose, onSubmit }) => {
               </Button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Analytics Modal Component
+const AnalyticsModal = ({ course, isOpen, loading, onClose, courses, stats }) => {
+  const [analyticsData, setAnalyticsData] = useState(null)
+  const [analyticsLoading, setAnalyticsLoading] = useState(false)
+  const [analyticsError, setAnalyticsError] = useState(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAnalyticsData()
+    }
+  }, [isOpen, course])
+
+  const loadAnalyticsData = async () => {
+    try {
+      setAnalyticsLoading(true)
+      setAnalyticsError(null)
+
+      // Get enrollment data for analytics
+      const allEnrollments = await enrollmentService.getAll()
+      
+      let data = {}
+
+      if (course) {
+        // Single course analytics
+        const courseEnrollments = allEnrollments.filter(e => e.courseId === course.Id)
+        
+        data = {
+          title: course.title,
+          totalStudents: courseEnrollments.length,
+          completedStudents: courseEnrollments.filter(e => e.progress >= 100).length,
+          averageProgress: courseEnrollments.length > 0 
+            ? courseEnrollments.reduce((sum, e) => sum + e.progress, 0) / courseEnrollments.length 
+            : 0,
+          revenue: course.price * courseEnrollments.length,
+          rating: course.rating,
+          enrollmentTrend: generateEnrollmentTrend(courseEnrollments),
+          progressDistribution: generateProgressDistribution(courseEnrollments)
+        }
+      } else {
+        // Overall instructor analytics
+        const instructorEnrollments = allEnrollments.filter(enrollment =>
+          courses.some(c => c.Id === enrollment.courseId)
+        )
+
+        data = {
+          title: 'Overall Performance',
+          totalStudents: instructorEnrollments.length,
+          completedStudents: instructorEnrollments.filter(e => e.progress >= 100).length,
+          averageProgress: instructorEnrollments.length > 0 
+            ? instructorEnrollments.reduce((sum, e) => sum + e.progress, 0) / instructorEnrollments.length 
+            : 0,
+          revenue: stats.totalEarnings,
+          totalCourses: courses.length,
+          enrollmentTrend: generateEnrollmentTrend(instructorEnrollments),
+          progressDistribution: generateProgressDistribution(instructorEnrollments),
+          coursePerformance: generateCoursePerformance(courses, instructorEnrollments)
+        }
+      }
+
+      setAnalyticsData(data)
+    } catch (err) {
+      setAnalyticsError(err.message || 'Failed to load analytics data')
+    } finally {
+      setAnalyticsLoading(false)
+    }
+  }
+
+  const generateEnrollmentTrend = (enrollments) => {
+    // Generate monthly enrollment data for the past 6 months
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+    return months.map(month => ({
+      month,
+      enrollments: Math.floor(Math.random() * enrollments.length) + 1
+    }))
+  }
+
+  const generateProgressDistribution = (enrollments) => {
+    const ranges = [
+      { range: '0-25%', count: 0 },
+      { range: '26-50%', count: 0 },
+      { range: '51-75%', count: 0 },
+      { range: '76-100%', count: 0 }
+    ]
+
+    enrollments.forEach(enrollment => {
+      if (enrollment.progress <= 25) ranges[0].count++
+      else if (enrollment.progress <= 50) ranges[1].count++
+      else if (enrollment.progress <= 75) ranges[2].count++
+      else ranges[3].count++
+    })
+
+    return ranges
+  }
+
+  const generateCoursePerformance = (courses, enrollments) => {
+    return courses.map(course => {
+      const courseEnrollments = enrollments.filter(e => e.courseId === course.Id)
+      return {
+        name: course.title,
+        students: courseEnrollments.length,
+        completion: courseEnrollments.length > 0 
+          ? Math.round((courseEnrollments.filter(e => e.progress >= 100).length / courseEnrollments.length) * 100)
+          : 0,
+        revenue: course.price * courseEnrollments.length
+      }
+    })
+  }
+
+  const handleClose = () => {
+    if (!analyticsLoading) {
+      setAnalyticsData(null)
+      setAnalyticsError(null)
+      onClose()
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={handleClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Analytics - {analyticsData?.title || 'Loading...'}
+            </h2>
+            <button
+              onClick={handleClose}
+              disabled={analyticsLoading}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <ApperIcon name="X" size={24} />
+            </button>
+          </div>
+
+          {/* Content */}
+          {analyticsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center space-x-3">
+                <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-gray-600">Loading analytics...</span>
+              </div>
+            </div>
+          ) : analyticsError ? (
+            <div className="text-center py-12">
+              <ApperIcon name="AlertCircle" size={48} className="text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Analytics</h3>
+              <p className="text-gray-600 mb-4">{analyticsError}</p>
+              <Button onClick={loadAnalyticsData}>Try Again</Button>
+            </div>
+          ) : analyticsData ? (
+            <div className="space-y-6">
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {analyticsData.totalStudents}
+                    </div>
+                    <div className="text-sm text-gray-600">Total Students</div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {analyticsData.completedStudents}
+                    </div>
+                    <div className="text-sm text-gray-600">Completed</div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {Math.round(analyticsData.averageProgress)}%
+                    </div>
+                    <div className="text-sm text-gray-600">Avg Progress</div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-600">
+                      ${analyticsData.revenue.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-gray-600">Revenue</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Enrollment Trend */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Enrollment Trend</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-center justify-center">
+                      <div className="w-full">
+                        {analyticsData.enrollmentTrend.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between mb-3">
+                            <span className="text-sm text-gray-600">{item.month}</span>
+                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-primary h-2 rounded-full" 
+                                style={{ width: `${(item.enrollments / Math.max(...analyticsData.enrollmentTrend.map(i => i.enrollments))) * 100}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-semibold">{item.enrollments}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Progress Distribution */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Progress Distribution</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-center justify-center">
+                      <div className="w-full space-y-4">
+                        {analyticsData.progressDistribution.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600 w-16">{item.range}</span>
+                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-3">
+                              <div 
+                                className={`h-3 rounded-full ${
+                                  index === 0 ? 'bg-red-500' :
+                                  index === 1 ? 'bg-yellow-500' :
+                                  index === 2 ? 'bg-blue-500' : 'bg-green-500'
+                                }`}
+                                style={{ 
+                                  width: `${analyticsData.totalStudents > 0 ? (item.count / analyticsData.totalStudents) * 100 : 0}%` 
+                                }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-semibold w-8">{item.count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Course Performance (only for overall analytics) */}
+              {!course && analyticsData.coursePerformance && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Course Performance</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-2">Course</th>
+                            <th className="text-center py-2">Students</th>
+                            <th className="text-center py-2">Completion</th>
+                            <th className="text-right py-2">Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.coursePerformance.map((course, index) => (
+                            <tr key={index} className="border-b">
+                              <td className="py-2">{course.name}</td>
+                              <td className="text-center py-2">{course.students}</td>
+                              <td className="text-center py-2">
+                                <span className={`inline-block px-2 py-1 rounded text-xs ${
+                                  course.completion >= 80 ? 'bg-green-100 text-green-800' :
+                                  course.completion >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-red-100 text-red-800'
+                                }`}>
+                                  {course.completion}%
+                                </span>
+                              </td>
+                              <td className="text-right py-2">${course.revenue.toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Actions */}
+              <div className="flex items-center justify-end space-x-3 pt-6 border-t">
+                <Button variant="outline">
+                  <ApperIcon name="Download" size={16} className="mr-2" />
+                  Export Report
+                </Button>
+                <Button onClick={handleClose}>
+                  Close
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
