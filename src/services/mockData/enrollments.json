@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "studentId": 1,
+    "courseId": 1,
+    "progress": 60,
+    "completedLessons": [1, 2, 3, 4, 5, 6],
+    "enrolledAt": "2024-01-20T10:00:00Z",
+    "updatedAt": "2024-01-25T14:30:00Z"
+  },
+  {
+    "Id": 2,
+    "studentId": 1,
+    "courseId": 2,
+    "progress": 30,
+    "completedLessons": [11, 12, 13],
+    "enrolledAt": "2024-01-18T15:30:00Z",
+    "updatedAt": "2024-01-22T09:15:00Z"
+  },
+  {
+    "Id": 3,
+    "studentId": 1,
+    "courseId": 3,
+    "progress": 100,
+    "completedLessons": [16, 17, 18, 19, 20],
+    "enrolledAt": "2024-01-15T12:00:00Z",
+    "updatedAt": "2024-01-30T16:45:00Z"
+  },
+  {
+    "Id": 4,
+    "studentId": 1,
+    "courseId": 8,
+    "progress": 85,
+    "completedLessons": [21, 22, 23, 24, 25, 26, 27, 28],
+    "enrolledAt": "2024-01-10T08:30:00Z",
+    "updatedAt": "2024-01-28T11:20:00Z"
+  },
+  {
+    "Id": 5,
+    "studentId": 2,
+    "courseId": 1,
+    "progress": 45,
+    "completedLessons": [1, 2, 3, 4],
+    "enrolledAt": "2024-01-22T14:00:00Z",
+    "updatedAt": "2024-01-26T10:15:00Z"
+  },
+  {
+    "Id": 6,
+    "studentId": 2,
+    "courseId": 4,
+    "progress": 20,
+    "completedLessons": [29, 30],
+    "enrolledAt": "2024-01-25T16:30:00Z",
+    "updatedAt": "2024-01-27T13:45:00Z"
+  },
+  {
+    "Id": 7,
+    "studentId": 3,
+    "courseId": 2,
+    "progress": 75,
+    "completedLessons": [11, 12, 13, 14, 15],
+    "enrolledAt": "2024-01-12T09:00:00Z",
+    "updatedAt": "2024-01-29T15:30:00Z"
+  },
+  {
+    "Id": 8,
+    "studentId": 3,
+    "courseId": 5,
+    "progress": 90,
+    "completedLessons": [31, 32, 33, 34, 35, 36, 37, 38],
+    "enrolledAt": "2024-01-08T11:45:00Z",
+    "updatedAt": "2024-01-31T12:20:00Z"
+  }
+]

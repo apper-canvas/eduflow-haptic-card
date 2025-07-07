@@ -1,0 +1,102 @@
+[
+  {
+    "Id": 1,
+    "name": "John Doe",
+    "email": "john.doe@email.com",
+    "role": "student",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Passionate about learning new technologies and improving my development skills.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Senior React Developer with 8+ years of experience in web development.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Michael Chen",
+    "email": "michael.chen@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Data Scientist specializing in machine learning and statistical analysis.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Emily Rodriguez",
+    "email": "emily.rodriguez@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Senior UX Designer with 10 years of experience at leading design agencies.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "David Wilson",
+    "email": "david.wilson@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Digital Marketing Expert who has helped over 500 businesses grow online.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "Lisa Park",
+    "email": "lisa.park@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Award-winning photographer with work featured in National Geographic.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 7,
+    "name": "James Taylor",
+    "email": "james.taylor@email.com",
+    "role": "instructor",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Music Producer with 15+ years of studio experience and Grammy-winning credits.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 8,
+    "name": "Anna Martinez",
+    "email": "anna.martinez@email.com",
+    "role": "student",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Aspiring web developer learning React and JavaScript fundamentals.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 9,
+    "name": "Robert Kim",
+    "email": "robert.kim@email.com",
+    "role": "student",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Data analyst looking to transition into data science and machine learning.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "Id": 10,
+    "name": "Jennifer Brown",
+    "email": "jennifer.brown@email.com",
+    "role": "student",
+    "avatar": "/api/placeholder/64/64",
+    "bio": "Marketing professional expanding skills in digital marketing and analytics.",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "Id": 1,
+    "courseId": 1,
+    "title": "Introduction to React",
+    "type": "video",
+    "content": "https://example.com/react-intro.mp4",
+    "duration": 25,
+    "order": 1
+  },
+  {
+    "Id": 2,
+    "courseId": 1,
+    "title": "Setting Up Your Development Environment",
+    "type": "video",
+    "content": "https://example.com/setup-env.mp4",
+    "duration": 15,
+    "order": 2
+  },
+  {
+    "Id": 3,
+    "courseId": 1,
+    "title": "React Course Materials",
+    "type": "pdf",
+    "content": "https://example.com/react-materials.pdf",
+    "duration": 10,
+    "order": 3
+  },
+  {
+    "Id": 4,
+    "courseId": 1,
+    "title": "Creating Your First Component",
+    "type": "video",
+    "content": "https://example.com/first-component.mp4",
+    "duration": 35,
+    "order": 4
+  },
+  {
+    "Id": 5,
+    "courseId": 1,
+    "title": "State and Props",
+    "type": "video",
+    "content": "https://example.com/state-props.mp4",
+    "duration": 40,
+    "order": 5
+  },
+  {
+    "Id": 6,
+    "courseId": 1,
+    "title": "Event Handling",
+    "type": "video",
+    "content": "https://example.com/event-handling.mp4",
+    "duration": 30,
+    "order": 6
+  },
+  {
+    "Id": 7,
+    "courseId": 1,
+    "title": "Conditional Rendering",
+    "type": "video",
+    "content": "https://example.com/conditional-rendering.mp4",
+    "duration": 25,
+    "order": 7
+  },
+  {
+    "Id": 8,
+    "courseId": 1,
+    "title": "Lists and Keys",
+    "type": "video",
+    "content": "https://example.com/lists-keys.mp4",
+    "duration": 35,
+    "order": 8
+  },
+  {
+    "Id": 9,
+    "courseId": 1,
+    "title": "React Hooks Introduction",
+    "type": "video",
+    "content": "https://example.com/hooks-intro.mp4",
+    "duration": 45,
+    "order": 9
+  },
+  {
+    "Id": 10,
+    "courseId": 1,
+    "title": "Project: Build a Todo App",
+    "type": "video",
+    "content": "https://example.com/todo-project.mp4",
+    "duration": 60,
+    "order": 10
+  },
+  {
+    "Id": 11,
+    "courseId": 2,
+    "title": "Python Basics",
+    "type": "video",
+    "content": "https://example.com/python-basics.mp4",
+    "duration": 30,
+    "order": 1
+  },
+  {
+    "Id": 12,
+    "courseId": 2,
+    "title": "Data Types and Variables",
+    "type": "video",
+    "content": "https://example.com/data-types.mp4",
+    "duration": 35,
+    "order": 2
+  },
+  {
+    "Id": 13,
+    "courseId": 2,
+    "title": "Control Flow",
+    "type": "video",
+    "content": "https://example.com/control-flow.mp4",
+    "duration": 40,
+    "order": 3
+  },
+  {
+    "Id": 14,
+    "courseId": 2,
+    "title": "Functions and Modules",
+    "type": "video",
+    "content": "https://example.com/functions-modules.mp4",
+    "duration": 45,
+    "order": 4
+  },
+  {
+    "Id": 15,
+    "courseId": 2,
+    "title": "Introduction to NumPy",
+    "type": "video",
+    "content": "https://example.com/numpy-intro.mp4",
+    "duration": 50,
+    "order": 5
+  },
+  {
+    "Id": 16,
+    "courseId": 3,
+    "title": "Design Thinking Process",
+    "type": "video",
+    "content": "https://example.com/design-thinking.mp4",
+    "duration": 35,
+    "order": 1
+  },
+  {
+    "Id": 17,
+    "courseId": 3,
+    "title": "User Research Methods",
+    "type": "video",
+    "content": "https://example.com/user-research.mp4",
+    "duration": 40,
+    "order": 2
+  },
+  {
+    "Id": 18,
+    "courseId": 3,
+    "title": "Wireframing Basics",
+    "type": "video",
+    "content": "https://example.com/wireframing.mp4",
+    "duration": 30,
+    "order": 3
+  },
+  {
+    "Id": 19,
+    "courseId": 3,
+    "title": "Prototyping with Figma",
+    "type": "video",
+    "content": "https://example.com/figma-prototyping.mp4",
+    "duration": 45,
+    "order": 4
+  },
+  {
+    "Id": 20,
+    "courseId": 3,
+    "title": "Design Systems",
+    "type": "video",
+    "content": "https://example.com/design-systems.mp4",
+    "duration": 50,
+    "order": 5
+  }
+]

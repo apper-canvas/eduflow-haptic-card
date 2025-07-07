@@ -1,0 +1,158 @@
+[
+  {
+    "Id": 1,
+    "courseId": 1,
+    "title": "React Fundamentals Quiz",
+    "passingScore": 70,
+    "questions": [
+      {
+        "question": "What is React?",
+        "options": [
+          "A JavaScript library for building user interfaces",
+          "A database management system",
+          "A web server",
+          "A CSS framework"
+        ],
+        "correctAnswer": 0,
+        "explanation": "React is a JavaScript library developed by Facebook for building user interfaces, particularly for web applications."
+      },
+      {
+        "question": "What is JSX?",
+        "options": [
+          "A JavaScript extension",
+          "A syntax extension for JavaScript",
+          "A new programming language",
+          "A CSS preprocessor"
+        ],
+        "correctAnswer": 1,
+        "explanation": "JSX is a syntax extension for JavaScript that allows you to write HTML-like code in your JavaScript files."
+      },
+      {
+        "question": "Which method is used to render a React component?",
+        "options": [
+          "render()",
+          "display()",
+          "show()",
+          "mount()"
+        ],
+        "correctAnswer": 0,
+        "explanation": "The render() method is used to render React components to the DOM."
+      },
+      {
+        "question": "What are props in React?",
+        "options": [
+          "Properties passed to components",
+          "Internal component state",
+          "CSS styles",
+          "Event handlers"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Props are properties that are passed to React components from their parent components."
+      },
+      {
+        "question": "What hook is used for state management in functional components?",
+        "options": [
+          "useEffect",
+          "useState",
+          "useContext",
+          "useReducer"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The useState hook is used to add state to functional components in React."
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "courseId": 2,
+    "title": "Python Basics Quiz",
+    "passingScore": 75,
+    "questions": [
+      {
+        "question": "What is the correct way to declare a variable in Python?",
+        "options": [
+          "var x = 5",
+          "x = 5",
+          "int x = 5",
+          "declare x = 5"
+        ],
+        "correctAnswer": 1,
+        "explanation": "In Python, you simply assign a value to a variable name without declaring its type."
+      },
+      {
+        "question": "Which of the following is NOT a Python data type?",
+        "options": [
+          "list",
+          "dict",
+          "array",
+          "tuple"
+        ],
+        "correctAnswer": 2,
+        "explanation": "While Python has lists, arrays are not a built-in data type. You need to import the array module or use lists instead."
+      },
+      {
+        "question": "What does the 'len()' function do?",
+        "options": [
+          "Returns the last element",
+          "Returns the length of an object",
+          "Returns the first element",
+          "Returns the type of an object"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The len() function returns the number of items in an object like a string, list, or tuple."
+      },
+      {
+        "question": "Which operator is used for exponentiation in Python?",
+        "options": [
+          "^",
+          "**",
+          "exp",
+          "pow"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The ** operator is used for exponentiation in Python (e.g., 2**3 equals 8)."
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "courseId": 3,
+    "title": "UI/UX Design Principles Quiz",
+    "passingScore": 80,
+    "questions": [
+      {
+        "question": "What does UX stand for?",
+        "options": [
+          "User Experience",
+          "User Extension",
+          "Universal Experience",
+          "User Execution"
+        ],
+        "correctAnswer": 0,
+        "explanation": "UX stands for User Experience, which encompasses all aspects of the end-user's interaction with a product."
+      },
+      {
+        "question": "What is the primary goal of user research?",
+        "options": [
+          "To validate design decisions",
+          "To understand user needs and behaviors",
+          "To create beautiful designs",
+          "To increase conversion rates"
+        ],
+        "correctAnswer": 1,
+        "explanation": "The primary goal of user research is to understand user needs, behaviors, and motivations to inform design decisions."
+      },
+      {
+        "question": "What is a wireframe?",
+        "options": [
+          "A high-fidelity mockup",
+          "A low-fidelity structural blueprint",
+          "A color scheme",
+          "A user journey map"
+        ],
+        "correctAnswer": 1,
+        "explanation": "A wireframe is a low-fidelity structural blueprint that shows the basic structure and layout of a page or screen."
+      }
+    ]
+  }
+]
