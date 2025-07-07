@@ -216,10 +216,10 @@ const handleSubmit = () => {
           </div>
         </div>
         
-        {/* Content Area */}
+{/* Content Area */}
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto">
-{!showResults ? (
+            {!showResults ? (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">
@@ -376,6 +376,7 @@ const handleSubmit = () => {
                         )}
                       </div>
                     )}
+                  </div>
                   
                   {submitted && currentQ.explanation && (
                     <div className="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -443,7 +444,7 @@ const handleSubmit = () => {
                       {score >= quiz.passingScore ? "Congratulations!" : "Better luck next time!"}
                     </h3>
                     
-<p className="text-lg text-gray-600 mb-6">
+                    <p className="text-lg text-gray-600 mb-6">
                       You scored {score}% ({Object.values(answers).filter((answer, index) => {
                         const question = quiz.questions[index];
                         switch (question.type) {
