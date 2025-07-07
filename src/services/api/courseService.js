@@ -59,10 +59,23 @@ class CourseService {
     return true
   }
 
-  async getByInstructor(instructorId) {
+async getByInstructor(instructorId) {
     await this.delay()
     return this.courses.filter(course => course.instructorId === instructorId)
   }
-}
 
+  async updatePrice(id, newPrice) {
+    await this.delay()
+    const index = this.courses.findIndex(c => c.Id === id)
+    if (index === -1) {
+      throw new Error('Course not found')
+    }
+    this.courses[index] = {
+      ...this.courses[index],
+      price: newPrice,
+      updatedAt: new Date().toISOString()
+    }
+    return { ...this.courses[index] }
+  }
+}
 export const courseService = new CourseService()

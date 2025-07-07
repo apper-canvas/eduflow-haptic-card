@@ -9,6 +9,7 @@ import Rating from '@/components/molecules/Rating'
 import ApperIcon from '@/components/ApperIcon'
 import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
+import PaymentModal from '@/components/organisms/PaymentModal'
 import { courseService } from '@/services/api/courseService'
 import { lessonService } from '@/services/api/lessonService'
 import { quizService } from '@/services/api/quizService'
@@ -23,6 +24,7 @@ const CourseDetail = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [enrolling, setEnrolling] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   useEffect(() => {
     loadCourseData()
@@ -56,27 +58,37 @@ const CourseDetail = () => {
     }
   }
 
-  const handleEnroll = async () => {
-    try {
-      setEnrolling(true)
-      
-      const newEnrollment = {
-        studentId: 1, // Mock student ID
-        courseId: parseInt(id),
-        progress: 0,
-        completedLessons: [],
-        enrolledAt: new Date().toISOString()
+const handleEnroll = async () => {
+    if (course.price > 0) {
+      setShowPaymentModal(true)
+    } else {
+      // Free course - direct enrollment
+      try {
+        setEnrolling(true)
+        
+        const newEnrollment = {
+          studentId: 1, // Mock student ID
+          courseId: parseInt(id),
+          progress: 0,
+          completedLessons: [],
+          enrolledAt: new Date().toISOString()
+        }
+        
+        const enrollment = await enrollmentService.create(newEnrollment)
+        setEnrollment(enrollment)
+        
+        toast.success('Successfully enrolled in course!')
+      } catch (err) {
+        toast.error('Failed to enroll in course')
+      } finally {
+        setEnrolling(false)
       }
-      
-      const enrollment = await enrollmentService.create(newEnrollment)
-      setEnrollment(enrollment)
-      
-      toast.success('Successfully enrolled in course!')
-    } catch (err) {
-      toast.error('Failed to enroll in course')
-    } finally {
-      setEnrolling(false)
     }
+  }
+
+  const handlePaymentSuccess = (newEnrollment) => {
+    setEnrollment(newEnrollment)
+    setShowPaymentModal(false)
   }
 
   const formatDuration = (minutes) => {
@@ -355,9 +367,16 @@ const CourseDetail = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
+</div>
         </div>
       </div>
+
+      <PaymentModal
+        course={course}
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   )
 }

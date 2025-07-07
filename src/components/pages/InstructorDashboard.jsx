@@ -7,13 +7,16 @@ import DashboardStats from '@/components/organisms/DashboardStats'
 import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
 import Empty from '@/components/ui/Empty'
+import PriceEditModal from '@/components/organisms/PriceEditModal'
 import { courseService } from '@/services/api/courseService'
 import { enrollmentService } from '@/services/api/enrollmentService'
 
 const InstructorDashboard = () => {
-  const [courses, setCourses] = useState([])
+const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedCourse, setSelectedCourse] = useState(null)
+  const [showPriceModal, setShowPriceModal] = useState(false)
   const [stats, setStats] = useState({
     totalCourses: 0,
     activeStudents: 0,
@@ -63,6 +66,19 @@ const InstructorDashboard = () => {
     } finally {
       setLoading(false)
     }
+}
+
+  const handleEditPrice = (course) => {
+    setSelectedCourse(course)
+    setShowPriceModal(true)
+  }
+
+  const handlePriceUpdate = (updatedCourse) => {
+    setCourses(prev => prev.map(course => 
+      course.Id === updatedCourse.Id ? updatedCourse : course
+    ))
+    // Refresh stats to reflect updated earnings
+    loadDashboardData()
   }
 
   if (loading) {
@@ -149,7 +165,15 @@ const InstructorDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleEditPrice(course)}
+                            title="Edit Price"
+                          >
+                            <ApperIcon name="DollarSign" size={16} />
+                          </Button>
                           <Button size="sm" variant="outline">
                             <ApperIcon name="Edit" size={16} />
                           </Button>
@@ -269,9 +293,16 @@ const InstructorDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
+</div>
         </div>
       </div>
+
+      <PriceEditModal
+        course={selectedCourse}
+        isOpen={showPriceModal}
+        onClose={() => setShowPriceModal(false)}
+        onSuccess={handlePriceUpdate}
+      />
     </div>
   )
 }
