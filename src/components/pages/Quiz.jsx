@@ -219,13 +219,13 @@ const handleSubmit = () => {
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-3xl mx-auto">
-            {!showResults ? (
+{!showResults ? (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">
                     Question {currentQuestion + 1}: {currentQ.question}
                   </CardTitle>
-</CardHeader>
+                </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     {/* Multiple Choice Questions */}
