@@ -10,7 +10,7 @@ import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
 import { lessonService } from '@/services/api/lessonService'
 import { enrollmentService } from '@/services/api/enrollmentService'
-
+import { courseService } from '@/services/api/courseService'
 const LessonViewer = () => {
   const { courseId, lessonId } = useParams()
   const navigate = useNavigate()
@@ -40,17 +40,26 @@ const LessonViewer = () => {
       setLoading(false)
     }
   }
-
-  const handleComplete = async () => {
+const handleComplete = async () => {
     try {
-      await enrollmentService.markLessonComplete(1, parseInt(courseId), parseInt(lessonId))
+      const result = await enrollmentService.markLessonComplete(1, parseInt(courseId), parseInt(lessonId))
       setIsCompleted(true)
       toast.success('Lesson marked as complete!')
+      
+      // Check if course is now complete and generate certificate
+      if (result.courseCompleted) {
+        try {
+          const course = await courseService.getById(parseInt(courseId))
+          await enrollmentService.generateCertificate(1, parseInt(courseId), course.title)
+          toast.success('🎉 Congratulations! Course completed and certificate downloaded!')
+        } catch (certError) {
+          toast.warning('Course completed but certificate generation failed')
+        }
+      }
     } catch (err) {
       toast.error('Failed to mark lesson as complete')
     }
   }
-
   const handleNext = () => {
     // Navigate to next lesson or quiz
     // This would be implemented based on course curriculum
