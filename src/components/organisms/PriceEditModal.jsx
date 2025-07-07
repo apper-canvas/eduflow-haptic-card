@@ -3,10 +3,9 @@ import { toast } from 'react-toastify'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/Card'
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
-import { Label } from '@/components/atoms/Label'
+import Label from '@/components/atoms/Label'
 import ApperIcon from '@/components/ApperIcon'
 import { courseService } from '@/services/api/courseService'
-
 const PriceEditModal = ({ course, isOpen, onClose, onSuccess }) => {
   const [price, setPrice] = useState(course?.price || 0)
   const [saving, setSaving] = useState(false)
