@@ -1484,7 +1484,9 @@ const ScheduleModal = ({ isOpen, onClose }) => {
                 </div>
             </div>}
         </div>
-    </div>
+</div>
 </div>
   )
 }
+
+export default InstructorDashboard
