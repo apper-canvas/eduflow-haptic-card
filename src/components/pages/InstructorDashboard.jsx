@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/Card'
-import Button from '@/components/atoms/Button'
-import Input from '@/components/atoms/Input'
-import Label from '@/components/atoms/Label'
-import ApperIcon from '@/components/ApperIcon'
-import DashboardStats from '@/components/organisms/DashboardStats'
-import Loading from '@/components/ui/Loading'
-import Error from '@/components/ui/Error'
-import Empty from '@/components/ui/Empty'
-import PriceEditModal from '@/components/organisms/PriceEditModal'
-import { courseService } from '@/services/api/courseService'
-import { enrollmentService } from '@/services/api/enrollmentService'
-import { toast } from 'react-toastify'
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import PriceEditModal from "@/components/organisms/PriceEditModal";
+import DashboardStats from "@/components/organisms/DashboardStats";
+import Label from "@/components/atoms/Label";
+import Button from "@/components/atoms/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card";
+import Input from "@/components/atoms/Input";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import { courseService } from "@/services/api/courseService";
+import { enrollmentService } from "@/services/api/enrollmentService";
 
 const InstructorDashboard = () => {
 const [courses, setCourses] = useState([])
@@ -21,10 +21,12 @@ const [courses, setCourses] = useState([])
 const [selectedCourse, setSelectedCourse] = useState(null)
   const [showPriceModal, setShowPriceModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [selectedCourseForAnalytics, setSelectedCourseForAnalytics] = useState(null)
+const [selectedCourseForAnalytics, setSelectedCourseForAnalytics] = useState(null)
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false)
   const [analyticsLoading, setAnalyticsLoading] = useState(false)
   const [createLoading, setCreateLoading] = useState(false)
+  const [showStudentMessages, setShowStudentMessages] = useState(false)
+  const [showSchedule, setShowSchedule] = useState(false)
   const [stats, setStats] = useState({
     totalCourses: 0,
     activeStudents: 0,
@@ -84,6 +86,13 @@ const handleViewAnalytics = (course = null) => {
     setShowAnalyticsModal(true)
   }
 
+  const handleStudentMessages = () => {
+    setShowStudentMessages(true)
+  }
+
+  const handleSchedule = () => {
+    setShowSchedule(true)
+  }
 const handlePriceUpdate = (updatedCourse) => {
     setCourses(prev => prev.map(course => 
       course.Id === updatedCourse.Id ? updatedCourse : course
@@ -301,11 +310,19 @@ const handlePriceUpdate = (updatedCourse) => {
                     <ApperIcon name="BarChart" size={16} className="mr-2" />
                     Analytics
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+<Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleStudentMessages}
+                  >
                     <ApperIcon name="MessageCircle" size={16} className="mr-2" />
                     Student Messages
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleSchedule}
+                  >
                     <ApperIcon name="Calendar" size={16} className="mr-2" />
                     Schedule
                   </Button>
@@ -367,13 +384,23 @@ const handlePriceUpdate = (updatedCourse) => {
         onSubmit={handleCourseCreate}
       />
 
-      <AnalyticsModal
+<AnalyticsModal
         course={selectedCourseForAnalytics}
         isOpen={showAnalyticsModal}
         loading={analyticsLoading}
         onClose={() => setShowAnalyticsModal(false)}
         courses={courses}
         stats={stats}
+      />
+
+      <StudentMessagesModal
+        isOpen={showStudentMessages}
+        onClose={() => setShowStudentMessages(false)}
+      />
+
+      <ScheduleModal
+        isOpen={showSchedule}
+        onClose={() => setShowSchedule(false)}
       />
     </div>
   )
@@ -1034,7 +1061,524 @@ const AnalyticsModal = ({ course, isOpen, loading, onClose, courses, stats }) =>
         </div>
       </div>
     </div>
+</div>
+  )
+}
+// Student Messages Modal Component
+const StudentMessagesModal = ({ isOpen, onClose }) => {
+  const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [filter, setFilter] = useState('all') // all, unread, read
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Mock messages data
+  const mockMessages = [
+    {
+      Id: 1,
+      studentName: 'Alice Johnson',
+      studentAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      courseName: 'React Fundamentals',
+      subject: 'Question about useEffect hook',
+      message: 'Hi! I\'m having trouble understanding when to use useEffect vs useLayoutEffect. Could you explain the difference?',
+      timestamp: '2 hours ago',
+      isRead: false,
+      priority: 'normal'
+    },
+    {
+      Id: 2,
+      studentName: 'Bob Smith',
+      studentAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      courseName: 'JavaScript Advanced',
+      subject: 'Assignment submission issue',
+      message: 'I\'m unable to submit my final project. The upload button seems to be broken. Can you help?',
+      timestamp: '5 hours ago',
+      isRead: true,
+      priority: 'high'
+    },
+    {
+      Id: 3,
+      studentName: 'Carol Davis',
+      studentAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      courseName: 'Python for Beginners',
+      subject: 'Thank you for the great course!',
+      message: 'I just wanted to say thank you for creating such an engaging course. The examples were very helpful!',
+      timestamp: '1 day ago',
+      isRead: false,
+      priority: 'low'
+    },
+    {
+      Id: 4,
+      studentName: 'David Wilson',
+      studentAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      courseName: 'Web Development Bootcamp',
+      subject: 'Request for additional resources',
+      message: 'Could you recommend some additional resources for learning CSS Grid? I want to practice more.',
+      timestamp: '2 days ago',
+      isRead: true,
+      priority: 'normal'
+    },
+    {
+      Id: 5,
+      studentName: 'Emma Brown',
+      studentAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80',
+      courseName: 'React Fundamentals',
+      subject: 'Course completion certificate',
+      message: 'I\'ve completed all the lessons. How do I get my completion certificate?',
+      timestamp: '3 days ago',
+      isRead: false,
+      priority: 'normal'
+    }
+  ]
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(true)
+      // Simulate API call
+      setTimeout(() => {
+        setMessages(mockMessages)
+        setLoading(false)
+      }, 500)
+    }
+  }, [isOpen])
+
+  const filteredMessages = messages.filter(message => {
+    const matchesFilter = filter === 'all' || 
+      (filter === 'unread' && !message.isRead) || 
+      (filter === 'read' && message.isRead)
+    
+    const matchesSearch = searchTerm === '' || 
+      message.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.courseName.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    return matchesFilter && matchesSearch
+  })
+
+  const handleMarkAsRead = (messageId) => {
+    setMessages(prev => prev.map(msg => 
+      msg.Id === messageId ? { ...msg, isRead: true } : msg
+    ))
+    toast.success('Message marked as read')
+  }
+
+  const handleReply = (message) => {
+    toast.info(`Reply functionality for ${message.studentName} would open here`)
+  }
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high': return 'text-red-600 bg-red-50'
+      case 'low': return 'text-green-600 bg-green-50'
+      default: return 'text-blue-600 bg-blue-50'
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Student Messages</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <ApperIcon name="X" size={24} />
+            </button>
+          </div>
+
+          {/* Filters and Search */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex space-x-2">
+              <Button
+                size="sm"
+                variant={filter === 'all' ? 'default' : 'outline'}
+                onClick={() => setFilter('all')}
+              >
+                All ({messages.length})
+              </Button>
+              <Button
+                size="sm"
+                variant={filter === 'unread' ? 'default' : 'outline'}
+                onClick={() => setFilter('unread')}
+              >
+                Unread ({messages.filter(m => !m.isRead).length})
+              </Button>
+              <Button
+                size="sm"
+                variant={filter === 'read' ? 'default' : 'outline'}
+                onClick={() => setFilter('read')}
+              >
+                Read ({messages.filter(m => m.isRead).length})
+              </Button>
+            </div>
+            <div className="flex-1">
+              <Input
+                placeholder="Search messages..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          {/* Messages List */}
+          <div className="max-h-96 overflow-y-auto">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex items-center space-x-3">
+                  <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-gray-600">Loading messages...</span>
+                </div>
+              </div>
+            ) : filteredMessages.length === 0 ? (
+              <div className="text-center py-12">
+                <ApperIcon name="MessageCircle" size={48} className="text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No messages found</h3>
+                <p className="text-gray-600">
+                  {searchTerm ? 'Try adjusting your search terms' : 'No messages match the selected filter'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredMessages.map((message) => (
+                  <div 
+                    key={message.Id} 
+                    className={`p-4 border rounded-lg hover:shadow-md transition-shadow ${
+                      !message.isRead ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-start space-x-4">
+                      <img
+                        src={message.studentAvatar}
+                        alt={message.studentName}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-semibold text-gray-900">{message.studentName}</h4>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(message.priority)}`}>
+                              {message.priority}
+                            </span>
+                            {!message.isRead && (
+                              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-500">{message.timestamp}</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">{message.courseName}</p>
+                        <h5 className="font-medium text-gray-900 mb-2">{message.subject}</h5>
+                        <p className="text-gray-700 mb-3">{message.message}</p>
+                        <div className="flex items-center space-x-3">
+                          <Button
+                            size="sm"
+                            onClick={() => handleReply(message)}
+                          >
+                            <ApperIcon name="Reply" size={14} className="mr-1" />
+                            Reply
+                          </Button>
+                          {!message.isRead && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleMarkAsRead(message.Id)}
+                            >
+                              <ApperIcon name="Check" size={14} className="mr-1" />
+                              Mark as Read
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end space-x-3 pt-6 border-t mt-6">
+            <Button variant="outline" onClick={onClose}>
+              Close
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
-export default InstructorDashboard
+// Schedule Modal Component
+const ScheduleModal = ({ isOpen, onClose }) => {
+  const [schedule, setSchedule] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [selectedDay, setSelectedDay] = useState(null)
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const timeSlots = [
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+  ]
+
+  // Mock schedule data
+  const mockSchedule = {
+    Monday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: false, event: 'React Fundamentals - Live Session' },
+      '11:00': { available: false, event: 'Student Meeting - Alice Johnson' },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: false, event: 'Course Content Creation' },
+      '15:00': { available: false, event: 'Course Content Creation' },
+      '16:00': { available: true, event: null },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Tuesday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: true, event: null },
+      '11:00': { available: false, event: 'JavaScript Advanced - Q&A Session' },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: false, event: 'Office Hours' },
+      '15:00': { available: false, event: 'Office Hours' },
+      '16:00': { available: false, event: 'Student Meeting - Bob Smith' },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Wednesday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: false, event: 'Python Basics - Live Coding' },
+      '11:00': { available: false, event: 'Python Basics - Live Coding' },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: true, event: null },
+      '15:00': { available: true, event: null },
+      '16:00': { available: true, event: null },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Thursday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: true, event: null },
+      '11:00': { available: true, event: null },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: false, event: 'Web Development - Workshop' },
+      '15:00': { available: false, event: 'Web Development - Workshop' },
+      '16:00': { available: false, event: 'Web Development - Workshop' },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Friday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: true, event: null },
+      '11:00': { available: false, event: 'Course Review & Planning' },
+      '12:00': { available: false, event: 'Course Review & Planning' },
+      '13:00': { available: true, event: null },
+      '14:00': { available: true, event: null },
+      '15:00': { available: true, event: null },
+      '16:00': { available: true, event: null },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Saturday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: true, event: null },
+      '11:00': { available: true, event: null },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: true, event: null },
+      '15:00': { available: true, event: null },
+      '16:00': { available: true, event: null },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    },
+    Sunday: {
+      '09:00': { available: true, event: null },
+      '10:00': { available: true, event: null },
+      '11:00': { available: true, event: null },
+      '12:00': { available: true, event: null },
+      '13:00': { available: true, event: null },
+      '14:00': { available: true, event: null },
+      '15:00': { available: true, event: null },
+      '16:00': { available: true, event: null },
+      '17:00': { available: true, event: null },
+      '18:00': { available: true, event: null }
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(true)
+      // Simulate API call
+      setTimeout(() => {
+        setSchedule(mockSchedule)
+        setLoading(false)
+      }, 500)
+    }
+  }, [isOpen])
+
+  const toggleAvailability = (day, time) => {
+    setSchedule(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [time]: {
+          ...prev[day][time],
+          available: !prev[day][time].available
+        }
+      }
+    }))
+    
+    const newStatus = schedule[day][time].available ? 'unavailable' : 'available'
+    toast.success(`${day} ${time} marked as ${newStatus}`)
+  }
+
+  const getSlotColor = (slot) => {
+    if (!slot) return 'bg-gray-100 text-gray-400'
+    if (slot.event) return 'bg-red-100 text-red-800 border-red-200'
+    if (slot.available) return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
+    return 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Teaching Schedule</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <ApperIcon name="X" size={24} />
+            </button>
+          </div>
+
+          {/* Content */}
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center space-x-3">
+                <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-gray-600">Loading schedule...</span>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Legend */}
+              <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="text-sm font-medium text-gray-700">Legend:</div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+                  <span className="text-sm text-gray-600">Available</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+                  <span className="text-sm text-gray-600">Busy/Scheduled</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
+                  <span className="text-sm text-gray-600">Unavailable</span>
+                </div>
+              </div>
+
+              {/* Schedule Grid */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="p-3 text-left font-semibold text-gray-900 border-b">Time</th>
+                      {days.map(day => (
+                        <th key={day} className="p-3 text-center font-semibold text-gray-900 border-b min-w-[120px]">
+                          {day}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {timeSlots.map(time => (
+                      <tr key={time}>
+                        <td className="p-3 font-medium text-gray-700 border-b bg-gray-50">
+                          {time}
+                        </td>
+                        {days.map(day => {
+                          const slot = schedule[day]?.[time]
+                          return (
+                            <td key={`${day}-${time}`} className="p-1 border-b">
+                              <button
+                                onClick={() => toggleAvailability(day, time)}
+                                disabled={slot?.event}
+                                className={`w-full h-16 rounded-lg border transition-colors text-xs font-medium ${getSlotColor(slot)} ${
+                                  slot?.event ? 'cursor-not-allowed' : 'cursor-pointer'
+                                }`}
+                                title={slot?.event || (slot?.available ? 'Click to mark unavailable' : 'Click to mark available')}
+                              >
+                                {slot?.event ? (
+                                  <div className="p-1">
+                                    <div className="font-semibold">Busy</div>
+                                    <div className="text-xs leading-tight">{slot.event}</div>
+                                  </div>
+                                ) : slot?.available ? (
+                                  'Available'
+                                ) : (
+                                  'Unavailable'
+                                )}
+                              </button>
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between pt-6 border-t mt-6">
+                <div className="text-sm text-gray-600">
+                  Click on time slots to toggle availability. Scheduled events cannot be modified here.
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Button variant="outline">
+                    <ApperIcon name="Download" size={16} className="mr-2" />
+                    Export Schedule
+                  </Button>
+                  <Button onClick={onClose}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
