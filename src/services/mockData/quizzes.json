@@ -61,7 +61,7 @@
         "explanation": "The useState hook is used to add state to functional components in React."
       }
     ]
-  },
+},
   {
     "Id": 2,
     "courseId": 2,
@@ -69,6 +69,7 @@
     "passingScore": 75,
     "questions": [
       {
+        "type": "multiple-choice",
         "question": "What is the correct way to declare a variable in Python?",
         "options": [
           "var x = 5",
@@ -80,37 +81,23 @@
         "explanation": "In Python, you simply assign a value to a variable name without declaring its type."
       },
       {
-        "question": "Which of the following is NOT a Python data type?",
-        "options": [
-          "list",
-          "dict",
-          "array",
-          "tuple"
-        ],
-        "correctAnswer": 2,
-        "explanation": "While Python has lists, arrays are not a built-in data type. You need to import the array module or use lists instead."
+        "type": "true-false",
+        "question": "Python is a statically typed language.",
+        "correctAnswer": false,
+        "explanation": "Python is a dynamically typed language, meaning you don't need to declare variable types explicitly."
       },
       {
-        "question": "What does the 'len()' function do?",
-        "options": [
-          "Returns the last element",
-          "Returns the length of an object",
-          "Returns the first element",
-          "Returns the type of an object"
-        ],
-        "correctAnswer": 1,
+        "type": "fill-in-blank",
+        "question": "The _____ function is used to get the length of a list in Python.",
+        "correctAnswer": "len",
         "explanation": "The len() function returns the number of items in an object like a string, list, or tuple."
       },
       {
-        "question": "Which operator is used for exponentiation in Python?",
-        "options": [
-          "^",
-          "**",
-          "exp",
-          "pow"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The ** operator is used for exponentiation in Python (e.g., 2**3 equals 8)."
+        "type": "short-answer",
+        "question": "Explain what a Python list is and give an example.",
+        "keyTerms": ["list", "ordered", "mutable", "collection"],
+        "sampleAnswer": "A Python list is an ordered, mutable collection of items that can store different data types. Example: my_list = [1, 2, 'hello', True]",
+        "explanation": "Lists are one of the most versatile data structures in Python, allowing you to store and manipulate collections of data."
       }
     ]
   },
@@ -121,6 +108,7 @@
     "passingScore": 80,
     "questions": [
       {
+        "type": "multiple-choice",
         "question": "What does UX stand for?",
         "options": [
           "User Experience",
@@ -132,26 +120,62 @@
         "explanation": "UX stands for User Experience, which encompasses all aspects of the end-user's interaction with a product."
       },
       {
-        "question": "What is the primary goal of user research?",
-        "options": [
-          "To validate design decisions",
-          "To understand user needs and behaviors",
-          "To create beautiful designs",
-          "To increase conversion rates"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The primary goal of user research is to understand user needs, behaviors, and motivations to inform design decisions."
+        "type": "true-false",
+        "question": "Wireframes should include detailed colors and typography.",
+        "correctAnswer": false,
+        "explanation": "Wireframes are low-fidelity blueprints that focus on structure and layout, not visual design details like colors and typography."
       },
       {
-        "question": "What is a wireframe?",
+        "type": "fill-in-blank",
+        "question": "A _____ is a low-fidelity structural blueprint of a webpage or app screen.",
+        "correctAnswer": "wireframe",
+        "explanation": "A wireframe shows the basic structure and layout without detailed visual design elements."
+      },
+      {
+        "type": "essay",
+        "question": "Describe the importance of user research in the design process and explain at least three methods of conducting user research.",
+        "keyTerms": ["user research", "interviews", "surveys", "usability testing", "personas", "user needs"],
+        "sampleAnswer": "User research is crucial because it helps designers understand user needs, behaviors, and pain points before creating solutions. Three methods include: 1) User interviews - direct conversations to gather qualitative insights, 2) Surveys - quantitative data collection from larger groups, 3) Usability testing - observing users interact with prototypes to identify issues.",
+        "explanation": "User research ensures designs are based on real user needs rather than assumptions, leading to more effective and user-friendly products."
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "courseId": 1,
+    "title": "Mixed Question Types Quiz",
+    "passingScore": 70,
+    "questions": [
+      {
+        "type": "multiple-choice",
+        "question": "Which of the following is a React hook?",
         "options": [
-          "A high-fidelity mockup",
-          "A low-fidelity structural blueprint",
-          "A color scheme",
-          "A user journey map"
+          "useState",
+          "componentDidMount",
+          "render",
+          "constructor"
         ],
-        "correctAnswer": 1,
-        "explanation": "A wireframe is a low-fidelity structural blueprint that shows the basic structure and layout of a page or screen."
+        "correctAnswer": 0,
+        "explanation": "useState is a React hook that allows you to add state to functional components."
+      },
+      {
+        "type": "true-false",
+        "question": "React components must always return JSX.",
+        "correctAnswer": false,
+        "explanation": "React components can return JSX, strings, numbers, arrays, or null. They don't always have to return JSX."
+      },
+      {
+        "type": "fill-in-blank",
+        "question": "The _____ hook is used to perform side effects in React functional components.",
+        "correctAnswer": "useEffect",
+        "explanation": "useEffect is used for side effects like data fetching, subscriptions, or manually changing the DOM."
+      },
+      {
+        "type": "short-answer",
+        "question": "Explain what props are in React and how they are used.",
+        "keyTerms": ["props", "properties", "parent", "child", "component", "data"],
+        "sampleAnswer": "Props are properties that are passed from parent components to child components in React. They allow data to flow down the component tree and make components reusable by accepting different input values.",
+        "explanation": "Props are the mechanism for passing data and event handlers down the component hierarchy in React."
       }
     ]
   }

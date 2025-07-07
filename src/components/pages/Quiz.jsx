@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/Card'
-import Button from '@/components/atoms/Button'
-import ApperIcon from '@/components/ApperIcon'
-import CourseNavigation from '@/components/organisms/CourseNavigation'
-import Loading from '@/components/ui/Loading'
-import Error from '@/components/ui/Error'
-import { quizService } from '@/services/api/quizService'
-import { cn } from '@/utils/cn'
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import CourseNavigation from "@/components/organisms/CourseNavigation";
+import Button from "@/components/atoms/Button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/atoms/Card";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import { quizService } from "@/services/api/quizService";
 
 const Quiz = () => {
   const { courseId, quizId } = useParams()
@@ -40,26 +40,56 @@ const Quiz = () => {
     }
   }
 
-  const handleAnswerSelect = (questionIndex, answerIndex) => {
+const handleAnswerSelect = (questionIndex, value) => {
     if (submitted) return
     
     setAnswers(prev => ({
       ...prev,
-      [questionIndex]: answerIndex
+      [questionIndex]: value
     }))
   }
 
-  const handleSubmit = () => {
+const handleSubmit = () => {
     if (Object.keys(answers).length !== quiz.questions.length) {
       toast.error('Please answer all questions before submitting')
       return
     }
     
-    // Calculate score
+    // Calculate score based on question type
     let correctAnswers = 0
     quiz.questions.forEach((question, index) => {
-      if (answers[index] === question.correctAnswer) {
-        correctAnswers++
+      const userAnswer = answers[index]
+      
+      switch (question.type) {
+        case 'multiple-choice':
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++
+          }
+          break
+        case 'true-false':
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++
+          }
+          break
+        case 'fill-in-blank':
+          if (userAnswer && userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim()) {
+            correctAnswers++
+          }
+          break
+        case 'short-answer':
+        case 'essay':
+          // For demonstration, we'll check if answer contains key terms
+          if (userAnswer && question.keyTerms && question.keyTerms.some(term => 
+            userAnswer.toLowerCase().includes(term.toLowerCase())
+          )) {
+            correctAnswers++
+          }
+          break
+        default:
+          // Default to multiple choice behavior
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++
+          }
       }
     })
     
@@ -195,10 +225,11 @@ const Quiz = () => {
                   <CardTitle className="text-lg">
                     Question {currentQuestion + 1}: {currentQ.question}
                   </CardTitle>
-                </CardHeader>
+</CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {currentQ.options.map((option, index) => (
+                    {/* Multiple Choice Questions */}
+                    {(!currentQ.type || currentQ.type === 'multiple-choice') && currentQ.options && currentQ.options.map((option, index) => (
                       <button
                         key={index}
                         onClick={() => handleAnswerSelect(currentQuestion, index)}
@@ -234,7 +265,117 @@ const Quiz = () => {
                         </div>
                       </button>
                     ))}
-                  </div>
+
+                    {/* True/False Questions */}
+                    {currentQ.type === 'true-false' && (
+                      <div className="space-y-3">
+                        {[true, false].map((option, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleAnswerSelect(currentQuestion, option)}
+                            disabled={submitted}
+                            className={cn(
+                              "w-full p-4 text-left border-2 rounded-lg transition-all duration-200",
+                              answers[currentQuestion] === option
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-gray-200 hover:border-gray-300 hover:bg-gray-50",
+                              submitted && option === currentQ.correctAnswer && "border-success bg-success/10 text-success",
+                              submitted && answers[currentQuestion] === option && option !== currentQ.correctAnswer && "border-error bg-error/10 text-error"
+                            )}
+                          >
+                            <div className="flex items-center">
+                              <div className={cn(
+                                "w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3",
+                                answers[currentQuestion] === option
+                                  ? "border-primary bg-primary"
+                                  : "border-gray-300"
+                              )}>
+                                {answers[currentQuestion] === option && (
+                                  <div className="w-2 h-2 bg-white rounded-full" />
+                                )}
+                              </div>
+                              <span className="font-medium">{option ? 'True' : 'False'}</span>
+                              {submitted && option === currentQ.correctAnswer && (
+                                <ApperIcon name="Check" size={16} className="ml-auto text-success" />
+                              )}
+                              {submitted && answers[currentQuestion] === option && option !== currentQ.correctAnswer && (
+                                <ApperIcon name="X" size={16} className="ml-auto text-error" />
+                              )}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Fill-in-the-Blank Questions */}
+                    {currentQ.type === 'fill-in-blank' && (
+                      <div className="space-y-3">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={answers[currentQuestion] || ''}
+                            onChange={(e) => handleAnswerSelect(currentQuestion, e.target.value)}
+                            placeholder="Enter your answer..."
+                            disabled={submitted}
+                            className={cn(
+                              "w-full p-4 border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                              submitted && answers[currentQuestion]?.toLowerCase().trim() === currentQ.correctAnswer?.toLowerCase().trim()
+                                ? "border-success bg-success/10 text-success"
+                                : submitted && answers[currentQuestion] 
+                                ? "border-error bg-error/10 text-error"
+                                : "border-gray-200 focus:border-primary"
+                            )}
+                          />
+                          {submitted && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <ApperIcon 
+                                name={answers[currentQuestion]?.toLowerCase().trim() === currentQ.correctAnswer?.toLowerCase().trim() ? "Check" : "X"} 
+                                size={16} 
+                                className={answers[currentQuestion]?.toLowerCase().trim() === currentQ.correctAnswer?.toLowerCase().trim() ? "text-success" : "text-error"}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        {submitted && (
+                          <div className="text-sm text-gray-600">
+                            <strong>Correct answer:</strong> {currentQ.correctAnswer}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Short Answer/Essay Questions */}
+                    {(currentQ.type === 'short-answer' || currentQ.type === 'essay') && (
+                      <div className="space-y-3">
+                        <textarea
+                          value={answers[currentQuestion] || ''}
+                          onChange={(e) => handleAnswerSelect(currentQuestion, e.target.value)}
+                          placeholder={currentQ.type === 'essay' ? "Write your essay response..." : "Enter your short answer..."}
+                          disabled={submitted}
+                          rows={currentQ.type === 'essay' ? 6 : 3}
+                          className={cn(
+                            "w-full p-4 border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 resize-none",
+                            submitted && answers[currentQuestion] && currentQ.keyTerms && currentQ.keyTerms.some(term => 
+                              answers[currentQuestion].toLowerCase().includes(term.toLowerCase())
+                            )
+                              ? "border-success bg-success/10"
+                              : submitted && answers[currentQuestion] 
+                              ? "border-warning bg-warning/10"
+                              : "border-gray-200 focus:border-primary"
+                          )}
+                        />
+                        {submitted && currentQ.keyTerms && (
+                          <div className="text-sm text-gray-600">
+                            <strong>Key terms to include:</strong> {currentQ.keyTerms.join(', ')}
+                          </div>
+                        )}
+                        {submitted && currentQ.sampleAnswer && (
+                          <div className="text-sm text-gray-600">
+                            <strong>Sample answer:</strong> {currentQ.sampleAnswer}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   
                   {submitted && currentQ.explanation && (
                     <div className="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -302,8 +443,25 @@ const Quiz = () => {
                       {score >= quiz.passingScore ? "Congratulations!" : "Better luck next time!"}
                     </h3>
                     
-                    <p className="text-lg text-gray-600 mb-6">
-                      You scored {score}% ({Object.values(answers).filter((answer, index) => answer === quiz.questions[index].correctAnswer).length} out of {quiz.questions.length} correct)
+<p className="text-lg text-gray-600 mb-6">
+                      You scored {score}% ({Object.values(answers).filter((answer, index) => {
+                        const question = quiz.questions[index];
+                        switch (question.type) {
+                          case 'multiple-choice':
+                            return answer === question.correctAnswer;
+                          case 'true-false':
+                            return answer === question.correctAnswer;
+                          case 'fill-in-blank':
+                            return answer && answer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
+                          case 'short-answer':
+                          case 'essay':
+                            return answer && question.keyTerms && question.keyTerms.some(term => 
+                              answer.toLowerCase().includes(term.toLowerCase())
+                            );
+                          default:
+                            return answer === question.correctAnswer;
+                        }
+                      }).length} out of {quiz.questions.length} correct)
                     </p>
                     
                     <div className="flex justify-center space-x-4">
