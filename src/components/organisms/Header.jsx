@@ -12,6 +12,7 @@ import { cn } from '@/utils/cn'
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const auth = useContext(AuthContext)
 
   const navigation = [
     { name: 'Home', href: '/', icon: 'Home' },
@@ -86,9 +87,8 @@ const Header = () => {
               variant="ghost"
               size="sm"
               className="p-2"
-              onClick={() => {
-                const { logout } = useContext(AuthContext)
-                logout()
+onClick={() => {
+                auth.logout()
               }}
             >
               <ApperIcon name="LogOut" size={20} />
