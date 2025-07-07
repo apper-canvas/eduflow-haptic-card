@@ -133,11 +133,12 @@ const handlePriceUpdate = (updatedCourse) => {
     return <Error message={error} onRetry={loadDashboardData} />
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+return (
+    <>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Instructor Dashboard
@@ -402,7 +403,8 @@ const handlePriceUpdate = (updatedCourse) => {
         isOpen={showSchedule}
         onClose={() => setShowSchedule(false)}
       />
-    </div>
+</div>
+    </>
   )
 }
 
@@ -515,232 +517,197 @@ const CourseCreateModal = ({ isOpen, loading, onClose, onSubmit }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={handleClose}
-      />
-      
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    {/* Backdrop */}
+    <div className="absolute inset-0 bg-black bg-opacity-50" onClick={handleClose} />
+    {/* Modal */}
+    <div
+        className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Create New Course</h2>
-            <button
-              onClick={handleClose}
-              disabled={loading}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <ApperIcon name="X" size={24} />
-            </button>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Course Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.Name}
-                  onChange={(e) => handleInputChange('Name', e.target.value)}
-                  placeholder="Enter course name"
-                  className={errors.Name ? 'border-red-500' : ''}
-                />
-                {errors.Name && <p className="text-red-500 text-sm mt-1">{errors.Name}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="title">Course Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter course title"
-                  className={errors.title ? 'border-red-500' : ''}
-                />
-                {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
-              </div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Create New Course</h2>
+                <button
+                    onClick={handleClose}
+                    disabled={loading}
+                    className="text-gray-400 hover:text-gray-600">
+                    <ApperIcon name="X" size={24} />
+                </button>
             </div>
-
-            <div>
-              <Label htmlFor="description">Description *</Label>
-              <Input
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Enter course description"
-                className={errors.description ? 'border-red-500' : ''}
-              />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-            </div>
-
-            <div>
-              <Label htmlFor="long_description">Detailed Description</Label>
-              <textarea
-                id="long_description"
-                value={formData.long_description}
-                onChange={(e) => handleInputChange('long_description', e.target.value)}
-                placeholder="Enter detailed course description"
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              />
-            </div>
-
-            {/* Instructor Information */}
-            <div className="border-t pt-6">
-              <h3 className="text-lg font-semibold mb-4">Instructor Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="instructor_name">Instructor Name *</Label>
-                  <Input
-                    id="instructor_name"
-                    value={formData.instructor_name}
-                    onChange={(e) => handleInputChange('instructor_name', e.target.value)}
-                    placeholder="Enter instructor name"
-                    className={errors.instructor_name ? 'border-red-500' : ''}
-                  />
-                  {errors.instructor_name && <p className="text-red-500 text-sm mt-1">{errors.instructor_name}</p>}
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <Label htmlFor="name">Course Name *</Label>
+                        <Input
+                            id="name"
+                            value={formData.Name}
+                            onChange={e => handleInputChange("Name", e.target.value)}
+                            placeholder="Enter course name"
+                            className={errors.Name ? "border-red-500" : ""} />
+                        {errors.Name && <p className="text-red-500 text-sm mt-1">{errors.Name}</p>}
+                    </div>
+                    <div>
+                        <Label htmlFor="title">Course Title *</Label>
+                        <Input
+                            id="title"
+                            value={formData.title}
+                            onChange={e => handleInputChange("title", e.target.value)}
+                            placeholder="Enter course title"
+                            className={errors.title ? "border-red-500" : ""} />
+                        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
+                    </div>
                 </div>
-
                 <div>
-                  <Label htmlFor="instructor_title">Instructor Title</Label>
-                  <Input
-                    id="instructor_title"
-                    value={formData.instructor_title}
-                    onChange={(e) => handleInputChange('instructor_title', e.target.value)}
-                    placeholder="Enter instructor title"
-                  />
+                    <Label htmlFor="description">Description *</Label>
+                    <Input
+                        id="description"
+                        value={formData.description}
+                        onChange={e => handleInputChange("description", e.target.value)}
+                        placeholder="Enter course description"
+                        className={errors.description ? "border-red-500" : ""} />
+                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                 </div>
-              </div>
-
-              <div className="mt-4">
-                <Label htmlFor="instructor_bio">Instructor Bio</Label>
-                <textarea
-                  id="instructor_bio"
-                  value={formData.instructor_bio}
-                  onChange={(e) => handleInputChange('instructor_bio', e.target.value)}
-                  placeholder="Enter instructor bio"
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Course Details */}
-            <div className="border-t pt-6">
-              <h3 className="text-lg font-semibold mb-4">Course Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="category">Category *</Label>
-                  <select
-                    id="category"
-                    value={formData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.category ? 'border-red-500' : ''}`}
-                  >
-                    <option value="">Select category</option>
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                  {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                    <Label htmlFor="long_description">Detailed Description</Label>
+                    <textarea
+                        id="long_description"
+                        value={formData.long_description}
+                        onChange={e => handleInputChange("long_description", e.target.value)}
+                        placeholder="Enter detailed course description"
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" />
                 </div>
-
-                <div>
-                  <Label htmlFor="level">Level *</Label>
-                  <select
-                    id="level"
-                    value={formData.level}
-                    onChange={(e) => handleInputChange('level', e.target.value)}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.level ? 'border-red-500' : ''}`}
-                  >
-                    <option value="">Select level</option>
-                    {levels.map(level => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </select>
-                  {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level}</p>}
+                {/* Instructor Information */}
+                <div className="border-t pt-6">
+                    <h3 className="text-lg font-semibold mb-4">Instructor Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="instructor_name">Instructor Name *</Label>
+                            <Input
+                                id="instructor_name"
+                                value={formData.instructor_name}
+                                onChange={e => handleInputChange("instructor_name", e.target.value)}
+                                placeholder="Enter instructor name"
+                                className={errors.instructor_name ? "border-red-500" : ""} />
+                            {errors.instructor_name && <p className="text-red-500 text-sm mt-1">{errors.instructor_name}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="instructor_title">Instructor Title</Label>
+                            <Input
+                                id="instructor_title"
+                                value={formData.instructor_title}
+                                onChange={e => handleInputChange("instructor_title", e.target.value)}
+                                placeholder="Enter instructor title" />
+                        </div>
+                    </div>
+                    <div className="mt-4">
+                        <Label htmlFor="instructor_bio">Instructor Bio</Label>
+                        <textarea
+                            id="instructor_bio"
+                            value={formData.instructor_bio}
+                            onChange={e => handleInputChange("instructor_bio", e.target.value)}
+                            placeholder="Enter instructor bio"
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" />
+                    </div>
                 </div>
-
-                <div>
-                  <Label htmlFor="price">Price ($)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                    placeholder="0.00"
-                    className={errors.price ? 'border-red-500' : ''}
-                  />
-                  {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                {/* Course Details */}
+                <div className="border-t pt-6">
+                    <h3 className="text-lg font-semibold mb-4">Course Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <Label htmlFor="category">Category *</Label>
+                            <select
+                                id="category"
+                                value={formData.category}
+                                onChange={e => handleInputChange("category", e.target.value)}
+                                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.category ? "border-red-500" : ""}`}>
+                                <option value="">Select category</option>
+                                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                            </select>
+                            {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="level">Level *</Label>
+                            <select
+                                id="level"
+                                value={formData.level}
+                                onChange={e => handleInputChange("level", e.target.value)}
+                                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.level ? "border-red-500" : ""}`}>
+                                <option value="">Select level</option>
+                                {levels.map(level => <option key={level} value={level}>{level}</option>)}
+                            </select>
+                            {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="price">Price ($)</Label>
+                            <Input
+                                id="price"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={formData.price}
+                                onChange={e => handleInputChange("price", parseFloat(e.target.value) || 0)}
+                                placeholder="0.00"
+                                className={errors.price ? "border-red-500" : ""} />
+                            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <Label htmlFor="duration">Duration (hours) *</Label>
+                            <Input
+                                id="duration"
+                                type="number"
+                                min="0.5"
+                                step="0.5"
+                                value={formData.duration}
+                                onChange={e => handleInputChange("duration", parseFloat(e.target.value) || 0)}
+                                placeholder="Enter duration in hours"
+                                className={errors.duration ? "border-red-500" : ""} />
+                            {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="thumbnail">Thumbnail URL</Label>
+                            <Input
+                                id="thumbnail"
+                                value={formData.thumbnail}
+                                onChange={e => handleInputChange("thumbnail", e.target.value)}
+                                placeholder="Enter thumbnail image URL" />
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor="duration">Duration (hours) *</Label>
-                  <Input
-                    id="duration"
-                    type="number"
-                    min="0.5"
-                    step="0.5"
-                    value={formData.duration}
-                    onChange={(e) => handleInputChange('duration', parseFloat(e.target.value) || 0)}
-                    placeholder="Enter duration in hours"
-                    className={errors.duration ? 'border-red-500' : ''}
-                  />
-                  {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
+                {/* Form Actions */}
+                <div className="flex items-center justify-end space-x-3 pt-6 border-t">
+                    <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>Cancel
+                                      </Button>
+                    <Button type="submit" disabled={loading} className="min-w-[120px]">
+                        {loading ? <div className="flex items-center">
+                            <svg
+                                className="animate-spin -ml-1 mr-2 h-4 w-4"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24">
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"></circle>
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>Creating...
+                                              </div> : "Create Course"}
+                    </Button>
                 </div>
-
-                <div>
-                  <Label htmlFor="thumbnail">Thumbnail URL</Label>
-                  <Input
-                    id="thumbnail"
-                    value={formData.thumbnail}
-                    onChange={(e) => handleInputChange('thumbnail', e.target.value)}
-                    placeholder="Enter thumbnail image URL"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex items-center justify-end space-x-3 pt-6 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="min-w-[120px]"
-              >
-                {loading ? (
-                  <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Creating...
-                  </div>
-                ) : (
-                  'Create Course'
-                )}
-              </Button>
-            </div>
-          </form>
+            </form>
         </div>
-      </div>
     </div>
+</div>
   )
 }
 
@@ -864,202 +831,181 @@ const AnalyticsModal = ({ course, isOpen, loading, onClose, courses, stats }) =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={handleClose}
-      />
-      
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    {/* Backdrop */}
+    <div className="absolute inset-0 bg-black bg-opacity-50" onClick={handleClose} />
+    {/* Modal */}
+    <div
+        className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Analytics - {analyticsData?.title || 'Loading...'}
-            </h2>
-            <button
-              onClick={handleClose}
-              disabled={analyticsLoading}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <ApperIcon name="X" size={24} />
-            </button>
-          </div>
-
-          {/* Content */}
-          {analyticsLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex items-center space-x-3">
-                <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span className="text-gray-600">Loading analytics...</span>
-              </div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Analytics - {analyticsData?.title || "Loading..."}
+                </h2>
+                <button
+                    onClick={handleClose}
+                    disabled={analyticsLoading}
+                    className="text-gray-400 hover:text-gray-600">
+                    <ApperIcon name="X" size={24} />
+                </button>
             </div>
-          ) : analyticsError ? (
-            <div className="text-center py-12">
-              <ApperIcon name="AlertCircle" size={48} className="text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Analytics</h3>
-              <p className="text-gray-600 mb-4">{analyticsError}</p>
-              <Button onClick={loadAnalyticsData}>Try Again</Button>
-            </div>
-          ) : analyticsData ? (
-            <div className="space-y-6">
-              {/* Key Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {analyticsData.totalStudents}
-                    </div>
-                    <div className="text-sm text-gray-600">Total Students</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-green-600">
-                      {analyticsData.completedStudents}
-                    </div>
-                    <div className="text-sm text-gray-600">Completed</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {Math.round(analyticsData.averageProgress)}%
-                    </div>
-                    <div className="text-sm text-gray-600">Avg Progress</div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-600">
-                      ${analyticsData.revenue.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600">Revenue</div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Enrollment Trend */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Enrollment Trend</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 flex items-center justify-center">
-                      <div className="w-full">
-                        {analyticsData.enrollmentTrend.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between mb-3">
-                            <span className="text-sm text-gray-600">{item.month}</span>
-                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-primary h-2 rounded-full" 
-                                style={{ width: `${(item.enrollments / Math.max(...analyticsData.enrollmentTrend.map(i => i.enrollments))) * 100}%` }}
-                              ></div>
+            {/* Content */}
+            {analyticsLoading ? <div className="flex items-center justify-center py-12">
+                <div className="flex items-center space-x-3">
+                    <svg
+                        className="animate-spin h-6 w-6 text-primary"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span className="text-gray-600">Loading analytics...</span>
+                </div>
+            </div> : analyticsError ? <div className="text-center py-12">
+                <ApperIcon name="AlertCircle" size={48} className="text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Analytics</h3>
+                <p className="text-gray-600 mb-4">{analyticsError}</p>
+                <Button onClick={loadAnalyticsData}>Try Again</Button>
+            </div> : analyticsData ? <div className="space-y-6">
+                {/* Key Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card>
+                        <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-primary">
+                                {analyticsData.totalStudents}
                             </div>
-                            <span className="text-sm font-semibold">{item.enrollments}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Progress Distribution */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Progress Distribution</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 flex items-center justify-center">
-                      <div className="w-full space-y-4">
-                        {analyticsData.progressDistribution.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600 w-16">{item.range}</span>
-                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-3">
-                              <div 
-                                className={`h-3 rounded-full ${
-                                  index === 0 ? 'bg-red-500' :
-                                  index === 1 ? 'bg-yellow-500' :
-                                  index === 2 ? 'bg-blue-500' : 'bg-green-500'
-                                }`}
-                                style={{ 
-                                  width: `${analyticsData.totalStudents > 0 ? (item.count / analyticsData.totalStudents) * 100 : 0}%` 
-                                }}
-                              ></div>
+                            <div className="text-sm text-gray-600">Total Students</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-green-600">
+                                {analyticsData.completedStudents}
                             </div>
-                            <span className="text-sm font-semibold w-8">{item.count}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Course Performance (only for overall analytics) */}
-              {!course && analyticsData.coursePerformance && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Course Performance</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b">
-                            <th className="text-left py-2">Course</th>
-                            <th className="text-center py-2">Students</th>
-                            <th className="text-center py-2">Completion</th>
-                            <th className="text-right py-2">Revenue</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {analyticsData.coursePerformance.map((course, index) => (
-                            <tr key={index} className="border-b">
-                              <td className="py-2">{course.name}</td>
-                              <td className="text-center py-2">{course.students}</td>
-                              <td className="text-center py-2">
-                                <span className={`inline-block px-2 py-1 rounded text-xs ${
-                                  course.completion >= 80 ? 'bg-green-100 text-green-800' :
-                                  course.completion >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  {course.completion}%
-                                </span>
-                              </td>
-                              <td className="text-right py-2">${course.revenue.toLocaleString()}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Actions */}
-              <div className="flex items-center justify-end space-x-3 pt-6 border-t">
-                <Button variant="outline">
-                  <ApperIcon name="Download" size={16} className="mr-2" />
-                  Export Report
-                </Button>
-                <Button onClick={handleClose}>
-                  Close
-                </Button>
-              </div>
-            </div>
-          ) : null}
+                            <div className="text-sm text-gray-600">Completed</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-blue-600">
+                                {Math.round(analyticsData.averageProgress)}%
+                                                    </div>
+                            <div className="text-sm text-gray-600">Avg Progress</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold text-purple-600">${analyticsData.revenue.toLocaleString()}
+                            </div>
+                            <div className="text-sm text-gray-600">Revenue</div>
+                        </CardContent>
+                    </Card>
+                </div>
+                {/* Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Enrollment Trend */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Enrollment Trend</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="h-64 flex items-center justify-center">
+                                <div className="w-full">
+                                    {analyticsData.enrollmentTrend.map(
+                                        (item, index) => <div key={index} className="flex items-center justify-between mb-3">
+                                            <span className="text-sm text-gray-600">{item.month}</span>
+                                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                                <div
+                                                    className="bg-primary h-2 rounded-full"
+                                                    style={{
+                                                        width: `${item.enrollments / Math.max(...analyticsData.enrollmentTrend.map(i => i.enrollments)) * 100}%`
+                                                    }}></div>
+                                            </div>
+                                            <span className="text-sm font-semibold">{item.enrollments}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Progress Distribution */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Progress Distribution</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="h-64 flex items-center justify-center">
+                                <div className="w-full space-y-4">
+                                    {analyticsData.progressDistribution.map(
+                                        (item, index) => <div key={index} className="flex items-center justify-between">
+                                            <span className="text-sm text-gray-600 w-16">{item.range}</span>
+                                            <div className="flex-1 mx-3 bg-gray-200 rounded-full h-3">
+                                                <div
+                                                    className={`h-3 rounded-full ${index === 0 ? "bg-red-500" : index === 1 ? "bg-yellow-500" : index === 2 ? "bg-blue-500" : "bg-green-500"}`}
+                                                    style={{
+                                                        width: `${analyticsData.totalStudents > 0 ? item.count / analyticsData.totalStudents * 100 : 0}%`
+                                                    }}></div>
+                                            </div>
+                                            <span className="text-sm font-semibold w-8">{item.count}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+                {/* Course Performance (only for overall analytics) */}
+                {!course && analyticsData.coursePerformance && <Card>
+                    <CardHeader>
+                        <CardTitle>Course Performance</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b">
+                                        <th className="text-left py-2">Course</th>
+                                        <th className="text-center py-2">Students</th>
+                                        <th className="text-center py-2">Completion</th>
+                                        <th className="text-right py-2">Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {analyticsData.coursePerformance.map((course, index) => <tr key={index} className="border-b">
+                                        <td className="py-2">{course.name}</td>
+                                        <td className="text-center py-2">{course.students}</td>
+                                        <td className="text-center py-2">
+                                            <span
+                                                className={`inline-block px-2 py-1 rounded text-xs ${course.completion >= 80 ? "bg-green-100 text-green-800" : course.completion >= 60 ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"}`}>
+                                                {course.completion}%
+                                                                                </span>
+                                        </td>
+                                        <td className="text-right py-2">${course.revenue.toLocaleString()}</td>
+                                    </tr>)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>}
+                {/* Actions */}
+                <div className="flex items-center justify-end space-x-3 pt-6 border-t">
+                    <Button variant="outline">
+                        <ApperIcon name="Download" size={16} className="mr-2" />Export Report
+                                        </Button>
+                    <Button onClick={handleClose}>Close
+                                        </Button>
+                </div>
+            </div> : null}
         </div>
-      </div>
     </div>
 </div>
   )
@@ -1177,148 +1123,120 @@ const StudentMessagesModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+    {/* Backdrop */}
+    <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+    {/* Modal */}
+    <div
+        className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
         <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Student Messages</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <ApperIcon name="X" size={24} />
-            </button>
-          </div>
-
-          {/* Filters and Search */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="flex space-x-2">
-              <Button
-                size="sm"
-                variant={filter === 'all' ? 'default' : 'outline'}
-                onClick={() => setFilter('all')}
-              >
-                All ({messages.length})
-              </Button>
-              <Button
-                size="sm"
-                variant={filter === 'unread' ? 'default' : 'outline'}
-                onClick={() => setFilter('unread')}
-              >
-                Unread ({messages.filter(m => !m.isRead).length})
-              </Button>
-              <Button
-                size="sm"
-                variant={filter === 'read' ? 'default' : 'outline'}
-                onClick={() => setFilter('read')}
-              >
-                Read ({messages.filter(m => m.isRead).length})
-              </Button>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Student Messages</h2>
+                <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                    <ApperIcon name="X" size={24} />
+                </button>
             </div>
-            <div className="flex-1">
-              <Input
-                placeholder="Search messages..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* Messages List */}
-          <div className="max-h-96 overflow-y-auto">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="flex items-center space-x-3">
-                  <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span className="text-gray-600">Loading messages...</span>
+            {/* Filters and Search */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className="flex space-x-2">
+                    <Button
+                        size="sm"
+                        variant={filter === "all" ? "default" : "outline"}
+                        onClick={() => setFilter("all")}>All ({messages.length})
+                                      </Button>
+                    <Button
+                        size="sm"
+                        variant={filter === "unread" ? "default" : "outline"}
+                        onClick={() => setFilter("unread")}>Unread ({messages.filter(m => !m.isRead).length})
+                                      </Button>
+                    <Button
+                        size="sm"
+                        variant={filter === "read" ? "default" : "outline"}
+                        onClick={() => setFilter("read")}>Read ({messages.filter(m => m.isRead).length})
+                                      </Button>
                 </div>
-              </div>
-            ) : filteredMessages.length === 0 ? (
-              <div className="text-center py-12">
-                <ApperIcon name="MessageCircle" size={48} className="text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No messages found</h3>
-                <p className="text-gray-600">
-                  {searchTerm ? 'Try adjusting your search terms' : 'No messages match the selected filter'}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredMessages.map((message) => (
-                  <div 
-                    key={message.Id} 
-                    className={`p-4 border rounded-lg hover:shadow-md transition-shadow ${
-                      !message.isRead ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-4">
-                      <img
-                        src={message.studentAvatar}
-                        alt={message.studentName}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <h4 className="font-semibold text-gray-900">{message.studentName}</h4>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(message.priority)}`}>
-                              {message.priority}
-                            </span>
-                            {!message.isRead && (
-                              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                            )}
-                          </div>
-                          <span className="text-sm text-gray-500">{message.timestamp}</span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{message.courseName}</p>
-                        <h5 className="font-medium text-gray-900 mb-2">{message.subject}</h5>
-                        <p className="text-gray-700 mb-3">{message.message}</p>
-                        <div className="flex items-center space-x-3">
-                          <Button
-                            size="sm"
-                            onClick={() => handleReply(message)}
-                          >
-                            <ApperIcon name="Reply" size={14} className="mr-1" />
-                            Reply
-                          </Button>
-                          {!message.isRead && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleMarkAsRead(message.Id)}
-                            >
-                              <ApperIcon name="Check" size={14} className="mr-1" />
-                              Mark as Read
-                            </Button>
-                          )}
-                        </div>
-                      </div>
+                <div className="flex-1">
+                    <Input
+                        placeholder="Search messages..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="w-full" />
+                </div>
+            </div>
+            {/* Messages List */}
+            <div className="max-h-96 overflow-y-auto">
+                {loading ? <div className="flex items-center justify-center py-12">
+                    <div className="flex items-center space-x-3">
+                        <svg
+                            className="animate-spin h-6 w-6 text-primary"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24">
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span className="text-gray-600">Loading messages...</span>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t mt-6">
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          </div>
+                </div> : filteredMessages.length === 0 ? <div className="text-center py-12">
+                    <ApperIcon name="MessageCircle" size={48} className="text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No messages found</h3>
+                    <p className="text-gray-600">
+                        {searchTerm ? "Try adjusting your search terms" : "No messages match the selected filter"}
+                    </p>
+                </div> : <div className="space-y-4">
+                    {filteredMessages.map(message => <div
+                        key={message.Id}
+                        className={`p-4 border rounded-lg hover:shadow-md transition-shadow ${!message.isRead ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}>
+                        <div className="flex items-start space-x-4">
+                            <img
+                                src={message.studentAvatar}
+                                alt={message.studentName}
+                                className="w-12 h-12 rounded-full object-cover" />
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center space-x-2">
+                                        <h4 className="font-semibold text-gray-900">{message.studentName}</h4>
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(message.priority)}`}>
+                                            {message.priority}
+                                        </span>
+                                        {!message.isRead && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>}
+                                    </div>
+                                    <span className="text-sm text-gray-500">{message.timestamp}</span>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-2">{message.courseName}</p>
+                                <h5 className="font-medium text-gray-900 mb-2">{message.subject}</h5>
+                                <p className="text-gray-700 mb-3">{message.message}</p>
+                                <div className="flex items-center space-x-3">
+                                    <Button size="sm" onClick={() => handleReply(message)}>
+                                        <ApperIcon name="Reply" size={14} className="mr-1" />Reply
+                                                                  </Button>
+                                    {!message.isRead && <Button size="sm" variant="outline" onClick={() => handleMarkAsRead(message.Id)}>
+                                        <ApperIcon name="Check" size={14} className="mr-1" />Mark as Read
+                                                                    </Button>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>)}
+                </div>}
+            </div>
+            {/* Actions */}
+            <div className="flex items-center justify-end space-x-3 pt-6 border-t mt-6">
+                <Button variant="outline" onClick={onClose}>Close
+                                </Button>
+            </div>
         </div>
-      </div>
     </div>
+</div>
   )
 }
 
@@ -1459,126 +1377,114 @@ const ScheduleModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    {/* Backdrop */}
+    <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+    {/* Modal */}
+    <div
+        className="relative bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Teaching Schedule</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <ApperIcon name="X" size={24} />
-            </button>
-          </div>
-
-          {/* Content */}
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex items-center space-x-3">
-                <svg className="animate-spin h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span className="text-gray-600">Loading schedule...</span>
-              </div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Teaching Schedule</h2>
+                <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                    <ApperIcon name="X" size={24} />
+                </button>
             </div>
-          ) : (
-            <div>
-              {/* Legend */}
-              <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm font-medium text-gray-700">Legend:</div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                  <span className="text-sm text-gray-600">Available</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                  <span className="text-sm text-gray-600">Busy/Scheduled</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                  <span className="text-sm text-gray-600">Unavailable</span>
-                </div>
-              </div>
-
-              {/* Schedule Grid */}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="p-3 text-left font-semibold text-gray-900 border-b">Time</th>
-                      {days.map(day => (
-                        <th key={day} className="p-3 text-center font-semibold text-gray-900 border-b min-w-[120px]">
-                          {day}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {timeSlots.map(time => (
-                      <tr key={time}>
-                        <td className="p-3 font-medium text-gray-700 border-b bg-gray-50">
-                          {time}
-                        </td>
-                        {days.map(day => {
-                          const slot = schedule[day]?.[time]
-                          return (
-                            <td key={`${day}-${time}`} className="p-1 border-b">
-                              <button
-                                onClick={() => toggleAvailability(day, time)}
-                                disabled={slot?.event}
-                                className={`w-full h-16 rounded-lg border transition-colors text-xs font-medium ${getSlotColor(slot)} ${
-                                  slot?.event ? 'cursor-not-allowed' : 'cursor-pointer'
-                                }`}
-                                title={slot?.event || (slot?.available ? 'Click to mark unavailable' : 'Click to mark available')}
-                              >
-                                {slot?.event ? (
-                                  <div className="p-1">
-                                    <div className="font-semibold">Busy</div>
-                                    <div className="text-xs leading-tight">{slot.event}</div>
-                                  </div>
-                                ) : slot?.available ? (
-                                  'Available'
-                                ) : (
-                                  'Unavailable'
-                                )}
-                              </button>
-                            </td>
-                          )
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center justify-between pt-6 border-t mt-6">
-                <div className="text-sm text-gray-600">
-                  Click on time slots to toggle availability. Scheduled events cannot be modified here.
-                </div>
+            {/* Content */}
+            {loading ? <div className="flex items-center justify-center py-12">
                 <div className="flex items-center space-x-3">
-                  <Button variant="outline">
-                    <ApperIcon name="Download" size={16} className="mr-2" />
-                    Export Schedule
-                  </Button>
-                  <Button onClick={onClose}>
-                    Close
-                  </Button>
+                    <svg
+                        className="animate-spin h-6 w-6 text-primary"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span className="text-gray-600">Loading schedule...</span>
                 </div>
-              </div>
-            </div>
-          )}
+            </div> : <div>
+                {/* Legend */}
+                <div
+                    className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                    <div className="text-sm font-medium text-gray-700">Legend:</div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+                        <span className="text-sm text-gray-600">Available</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+                        <span className="text-sm text-gray-600">Busy/Scheduled</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
+                        <span className="text-sm text-gray-600">Unavailable</span>
+                    </div>
+                </div>
+                {/* Schedule Grid */}
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr>
+                                <th className="p-3 text-left font-semibold text-gray-900 border-b">Time</th>
+                                {days.map(day => <th
+                                    key={day}
+                                    className="p-3 text-center font-semibold text-gray-900 border-b min-w-[120px]">
+                                    {day}
+                                </th>)}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {timeSlots.map(time => <tr key={time}>
+                                <td className="p-3 font-medium text-gray-700 border-b bg-gray-50">
+                                    {time}
+                                </td>
+                                {days.map(day => {
+                                    const slot = schedule[day]?.[time];
+
+                                    return (
+                                        <td key={`${day}-${time}`} className="p-1 border-b">
+                                            <button
+                                                onClick={() => toggleAvailability(day, time)}
+                                                disabled={slot?.event}
+                                                className={`w-full h-16 rounded-lg border transition-colors text-xs font-medium ${getSlotColor(slot)} ${slot?.event ? "cursor-not-allowed" : "cursor-pointer"}`}
+                                                title={slot?.event || (slot?.available ? "Click to mark unavailable" : "Click to mark available")}>
+                                                {slot?.event ? <div className="p-1">
+                                                    <div className="font-semibold">Busy</div>
+                                                    <div className="text-xs leading-tight">{slot.event}</div>
+                                                </div> : slot?.available ? "Available" : "Unavailable"}
+                                            </button>
+                                        </td>
+                                    );
+                                })}
+                            </tr>)}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-6 border-t mt-6">
+                    <div className="text-sm text-gray-600">Click on time slots to toggle availability. Scheduled events cannot be modified here.
+                                        </div>
+                    <div className="flex items-center space-x-3">
+                        <Button variant="outline">
+                            <ApperIcon name="Download" size={16} className="mr-2" />Export Schedule
+                                              </Button>
+                        <Button onClick={onClose}>Close
+                                              </Button>
+                    </div>
+                </div>
+            </div>}
         </div>
-      </div>
     </div>
+</div>
   )
 }
