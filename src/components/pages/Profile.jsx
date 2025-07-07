@@ -77,12 +77,18 @@ const Profile = () => {
               <CardHeader>
                 <CardTitle>Profile Picture</CardTitle>
               </CardHeader>
-              <CardContent>
+<CardContent>
                 <div className="flex flex-col items-center">
                   <Avatar className="h-32 w-32 mb-4">
-                    <AvatarImage src={user.avatar} />
+                    <AvatarImage 
+                      src={user.avatar || ''} 
+                      alt={`${user.name || 'User'}'s avatar`}
+                      onError={(e) => {
+                        console.warn('Avatar image failed to load:', e.target?.src)
+                      }}
+                    />
                     <AvatarFallback className="text-2xl">
-                      {user.name?.split(' ').map(n => n[0]).join('')}
+                      {user.name?.split(' ').map(n => n?.[0]).join('').toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   

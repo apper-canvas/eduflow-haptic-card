@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 import { cn } from '@/utils/cn'
 
 const Avatar = forwardRef(({ className, ...props }, ref) => {
@@ -13,18 +13,48 @@ const Avatar = forwardRef(({ className, ...props }, ref) => {
     />
   )
 })
-
 Avatar.displayName = 'Avatar'
 
-const AvatarImage = forwardRef(({ className, ...props }, ref) => {
+const AvatarImage = forwardRef(({ className, src, alt, onError, ...props }, ref) => {
+  const [hasError, setHasError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleError = (e) => {
+    setHasError(true)
+    setIsLoading(false)
+    // Hide the img element when error occurs to show fallback
+    if (e.target) {
+      e.target.style.display = 'none'
+    }
+    // Call parent onError handler if provided
+    if (onError) {
+      onError(e)
+    }
+  }
+
+  const handleLoad = () => {
+    setIsLoading(false)
+    setHasError(false)
+  }
+
+  // Don't render img if no src or if error occurred
+  if (!src || hasError) {
+    return null
+  }
+
   return (
     <img
       ref={ref}
+      src={src}
+      alt={alt || 'Avatar'}
       className={cn('aspect-square h-full w-full object-cover', className)}
+      onError={handleError}
+      onLoad={handleLoad}
       {...props}
     />
   )
 })
+AvatarImage.displayName = 'AvatarImage'
 
 AvatarImage.displayName = 'AvatarImage'
 
