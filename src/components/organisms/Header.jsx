@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom'
 import ApperIcon from '@/components/ApperIcon'
 import Button from '@/components/atoms/Button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar'
+import { useContext } from 'react'
+import { AuthContext } from '../../App'
+import { useSelector } from 'react-redux'
 import SearchBar from '@/components/molecules/SearchBar'
 import { cn } from '@/utils/cn'
 
@@ -72,13 +75,24 @@ const Header = () => {
               <ApperIcon name="Bell" size={20} />
             </Button>
             
-            <Link to="/profile">
+<Link to="/profile">
               <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
                 <AvatarImage src="/api/placeholder/32/32" />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
             </Link>
 
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-2"
+              onClick={() => {
+                const { logout } = useContext(AuthContext)
+                logout()
+              }}
+            >
+              <ApperIcon name="LogOut" size={20} />
+            </Button>
             {/* Mobile menu button */}
             <Button
               variant="ghost"

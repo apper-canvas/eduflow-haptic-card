@@ -1,115 +1,308 @@
-import enrollmentsData from '@/services/mockData/enrollments.json'
-import usersData from '@/services/mockData/users.json'
 class EnrollmentService {
   constructor() {
-    this.enrollments = [...enrollmentsData]
-  }
-
-  async delay(ms = 300) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    const { ApperClient } = window.ApperSDK
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    this.tableName = 'enrollment'
   }
 
   async getAll() {
-    await this.delay()
-    return [...this.enrollments]
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "completed_lessons" } },
+          { field: { Name: "enrolled_at" } },
+          { field: { Name: "updated_at" } },
+          { field: { Name: "student_id" } },
+          { field: { Name: "course_id" } }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching enrollments:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return []
+    }
   }
 
   async getById(id) {
-    await this.delay()
-    const enrollment = this.enrollments.find(e => e.Id === id)
-    if (!enrollment) {
-      throw new Error('Enrollment not found')
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "completed_lessons" } },
+          { field: { Name: "enrolled_at" } },
+          { field: { Name: "updated_at" } },
+          { field: { Name: "student_id" } },
+          { field: { Name: "course_id" } }
+        ]
+      }
+      
+      const response = await this.apperClient.getRecordById(this.tableName, id, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+
+      return response.data
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching enrollment with ID ${id}:`, error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return null
     }
-    return { ...enrollment }
   }
 
   async getByStudentId(studentId) {
-    await this.delay()
-    return this.enrollments.filter(enrollment => enrollment.studentId === studentId)
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "completed_lessons" } },
+          { field: { Name: "enrolled_at" } },
+          { field: { Name: "updated_at" } },
+          { field: { Name: "student_id" } },
+          { field: { Name: "course_id" } }
+        ],
+        where: [
+          {
+            FieldName: "student_id",
+            Operator: "EqualTo",
+            Values: [studentId]
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching student enrollments:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return []
+    }
   }
 
   async getByStudentAndCourse(studentId, courseId) {
-    await this.delay()
-    const enrollment = this.enrollments.find(e => 
-      e.studentId === studentId && e.courseId === courseId
-    )
-    if (!enrollment) {
-      throw new Error('Enrollment not found')
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "progress" } },
+          { field: { Name: "completed_lessons" } },
+          { field: { Name: "enrolled_at" } },
+          { field: { Name: "updated_at" } },
+          { field: { Name: "student_id" } },
+          { field: { Name: "course_id" } }
+        ],
+        where: [
+          {
+            FieldName: "student_id",
+            Operator: "EqualTo",
+            Values: [studentId]
+          },
+          {
+            FieldName: "course_id",
+            Operator: "EqualTo",
+            Values: [courseId]
+          }
+        ]
+      }
+      
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+
+      const enrollments = response.data || []
+      return enrollments.length > 0 ? enrollments[0] : null
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching enrollment:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return null
     }
-    return { ...enrollment }
   }
 
   async create(enrollmentData) {
-    await this.delay()
-    const newEnrollment = {
-      ...enrollmentData,
-      Id: Math.max(...this.enrollments.map(e => e.Id), 0) + 1,
-      enrolledAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+    try {
+      const params = {
+        records: [{
+          Name: enrollmentData.Name || `Enrollment-${enrollmentData.student_id}-${enrollmentData.course_id}`,
+          progress: enrollmentData.progress || 0,
+          completed_lessons: enrollmentData.completed_lessons || "",
+          student_id: enrollmentData.student_id,
+          course_id: enrollmentData.course_id
+        }]
+      }
+      
+      const response = await this.apperClient.createRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} enrollments:${JSON.stringify(failedRecords)}`)
+        }
+        
+        return successfulRecords.length > 0 ? successfulRecords[0].data : null
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating enrollment:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return null
     }
-    this.enrollments.push(newEnrollment)
-    return { ...newEnrollment }
   }
 
   async update(id, enrollmentData) {
-    await this.delay()
-    const index = this.enrollments.findIndex(e => e.Id === id)
-    if (index === -1) {
-      throw new Error('Enrollment not found')
-    }
-    this.enrollments[index] = {
-      ...this.enrollments[index],
-      ...enrollmentData,
-      updatedAt: new Date().toISOString()
-    }
-    return { ...this.enrollments[index] }
-  }
-async markLessonComplete(studentId, courseId, lessonId) {
-    await this.delay()
-    const enrollment = this.enrollments.find(e => 
-      e.studentId === studentId && e.courseId === courseId
-    )
-    if (!enrollment) {
-      throw new Error('Enrollment not found')
-    }
-    
-    if (!enrollment.completedLessons.includes(lessonId)) {
-      enrollment.completedLessons.push(lessonId)
-      enrollment.updatedAt = new Date().toISOString()
+    try {
+      const params = {
+        records: [{
+          Id: id,
+          Name: enrollmentData.Name || `Enrollment-${enrollmentData.student_id}-${enrollmentData.course_id}`,
+          progress: enrollmentData.progress,
+          completed_lessons: enrollmentData.completed_lessons,
+          student_id: enrollmentData.student_id,
+          course_id: enrollmentData.course_id
+        }]
+      }
       
-      // Update progress (mock calculation)
-      const totalLessons = 10 // This would be dynamic in real app
-      enrollment.progress = Math.round((enrollment.completedLessons.length / totalLessons) * 100)
+      const response = await this.apperClient.updateRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return null
+      }
+      
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success)
+        const failedUpdates = response.results.filter(result => !result.success)
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update ${failedUpdates.length} enrollments:${JSON.stringify(failedUpdates)}`)
+        }
+        
+        return successfulUpdates.length > 0 ? successfulUpdates[0].data : null
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating enrollment:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return null
     }
-    
-    // Check if course is now complete
-    const courseCompleted = await this.checkCourseCompletion(studentId, courseId)
-    
-    return { ...enrollment, courseCompleted }
+  }
+
+  async markLessonComplete(studentId, courseId, lessonId) {
+    try {
+      const enrollment = await this.getByStudentAndCourse(studentId, courseId)
+      if (!enrollment) {
+        throw new Error('Enrollment not found')
+      }
+      
+      // Parse completed lessons
+      let completedLessons = []
+      if (enrollment.completed_lessons) {
+        try {
+          completedLessons = typeof enrollment.completed_lessons === 'string'
+            ? enrollment.completed_lessons.split(',').map(id => parseInt(id)).filter(id => !isNaN(id))
+            : []
+        } catch (e) {
+          console.warn('Failed to parse completed lessons:', e)
+        }
+      }
+      
+      if (!completedLessons.includes(lessonId)) {
+        completedLessons.push(lessonId)
+        
+        // Calculate progress (simple calculation - could be enhanced)
+        const totalLessons = 10 // This would be dynamic in real app
+        const progress = Math.round((completedLessons.length / totalLessons) * 100)
+        
+        const updatedEnrollment = await this.update(enrollment.Id, {
+          ...enrollment,
+          progress: progress,
+          completed_lessons: completedLessons.join(',')
+        })
+        
+        const courseCompleted = progress >= 100
+        
+        return { ...updatedEnrollment, courseCompleted }
+      }
+      
+      return { ...enrollment, courseCompleted: enrollment.progress >= 100 }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error marking lesson complete:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      throw error
+    }
   }
 
   async checkCourseCompletion(studentId, courseId) {
-    const enrollment = this.enrollments.find(e => 
-      e.studentId === studentId && e.courseId === courseId
-    )
-    if (!enrollment) return false
-    
-    // Mock: Course is complete when progress reaches 100%
-    return enrollment.progress >= 100
+    try {
+      const enrollment = await this.getByStudentAndCourse(studentId, courseId)
+      if (!enrollment) return false
+      
+      return enrollment.progress >= 100
+    } catch (error) {
+      console.error("Error checking course completion:", error)
+      return false
+    }
   }
 
   async generateCertificate(studentId, courseId, courseTitle) {
-    await this.delay()
-    
     try {
-      // Get student information
-      const student = usersData.find(u => u.Id === studentId)
-      if (!student) {
-        throw new Error('Student not found')
-      }
-
+      // For demonstration, we'll use a simple approach
+      // In production, you might want to integrate with the user service
+      const studentName = `Student ${studentId}` // Simplified for demo
+      
       // Create certificate template element
-      const certificateElement = this.createCertificateElement(student.name, courseTitle, new Date())
+      const certificateElement = this.createCertificateElement(studentName, courseTitle, new Date())
       
       // Dynamically import libraries for PDF generation
       const html2canvas = (await import('html2canvas')).default
@@ -132,7 +325,7 @@ async markLessonComplete(studentId, courseId, lessonId) {
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
       
       // Download the certificate
-      const fileName = `${student.name.replace(/\s+/g, '_')}_${courseTitle.replace(/\s+/g, '_')}_Certificate.pdf`
+      const fileName = `${studentName.replace(/\s+/g, '_')}_${courseTitle.replace(/\s+/g, '_')}_Certificate.pdf`
       pdf.save(fileName)
       
       // Clean up
@@ -193,14 +386,39 @@ async markLessonComplete(studentId, courseId, lessonId) {
     document.body.appendChild(certificateDiv)
     return certificateDiv
   }
-async delete(id) {
-    await this.delay()
-    const index = this.enrollments.findIndex(e => e.Id === id)
-    if (index === -1) {
-      throw new Error('Enrollment not found')
+
+  async delete(id) {
+    try {
+      const params = {
+        RecordIds: [id]
+      }
+      
+      const response = await this.apperClient.deleteRecord(this.tableName, params)
+      
+      if (!response.success) {
+        console.error(response.message)
+        return false
+      }
+      
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success)
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} enrollments:${JSON.stringify(failedDeletions)}`)
+        }
+        
+        return failedDeletions.length === 0
+      }
+      
+      return true
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting enrollment:", error?.response?.data?.message)
+      } else {
+        console.error(error.message)
+      }
+      return false
     }
-    this.enrollments.splice(index, 1)
-    return true
   }
 }
 
