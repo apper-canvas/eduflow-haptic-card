@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/Card'
 import Button from '@/components/atoms/Button'
+import Input from '@/components/atoms/Input'
+import Label from '@/components/atoms/Label'
 import ApperIcon from '@/components/ApperIcon'
 import DashboardStats from '@/components/organisms/DashboardStats'
 import Loading from '@/components/ui/Loading'
@@ -10,6 +12,7 @@ import Empty from '@/components/ui/Empty'
 import PriceEditModal from '@/components/organisms/PriceEditModal'
 import { courseService } from '@/services/api/courseService'
 import { enrollmentService } from '@/services/api/enrollmentService'
+import { toast } from 'react-toastify'
 
 const InstructorDashboard = () => {
 const [courses, setCourses] = useState([])
@@ -17,13 +20,14 @@ const [courses, setCourses] = useState([])
   const [error, setError] = useState(null)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [showPriceModal, setShowPriceModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [createLoading, setCreateLoading] = useState(false)
   const [stats, setStats] = useState({
     totalCourses: 0,
     activeStudents: 0,
     completionRate: 0,
     totalEarnings: 0
   })
-
   useEffect(() => {
     loadDashboardData()
   }, [])
@@ -73,12 +77,37 @@ const [courses, setCourses] = useState([])
     setShowPriceModal(true)
   }
 
-  const handlePriceUpdate = (updatedCourse) => {
+const handlePriceUpdate = (updatedCourse) => {
     setCourses(prev => prev.map(course => 
       course.Id === updatedCourse.Id ? updatedCourse : course
     ))
     // Refresh stats to reflect updated earnings
     loadDashboardData()
+  }
+
+  const handleCreateCourse = () => {
+    setShowCreateModal(true)
+  }
+
+  const handleCourseCreate = async (courseData) => {
+    try {
+      setCreateLoading(true)
+      
+      // Create course using the service
+      const newCourse = await courseService.create(courseData)
+      
+      if (newCourse) {
+        toast.success('Course created successfully!')
+        setShowCreateModal(false)
+        // Refresh dashboard data to include new course
+        loadDashboardData()
+      }
+    } catch (err) {
+      console.error('Error creating course:', err.message)
+      toast.error(err.message || 'Failed to create course')
+    } finally {
+      setCreateLoading(false)
+    }
   }
 
   if (loading) {
@@ -102,7 +131,11 @@ const [courses, setCourses] = useState([])
               Manage your courses and track your teaching success
             </p>
           </div>
-          <Button size="lg" className="inline-flex items-center space-x-2">
+<Button 
+            size="lg" 
+            className="inline-flex items-center space-x-2"
+            onClick={handleCreateCourse}
+          >
             <ApperIcon name="Plus" size={20} />
             <span>Create New Course</span>
           </Button>
@@ -119,7 +152,11 @@ const [courses, setCourses] = useState([])
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>My Courses</span>
-                  <Button variant="outline" size="sm">
+<Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleCreateCourse}
+                  >
                     <ApperIcon name="Plus" size={16} className="mr-2" />
                     Create Course
                   </Button>
@@ -237,7 +274,11 @@ const [courses, setCourses] = useState([])
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
+<Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={handleCreateCourse}
+                  >
                     <ApperIcon name="Plus" size={16} className="mr-2" />
                     Create Course
                   </Button>
@@ -297,12 +338,357 @@ const [courses, setCourses] = useState([])
         </div>
       </div>
 
-      <PriceEditModal
+<PriceEditModal
         course={selectedCourse}
         isOpen={showPriceModal}
         onClose={() => setShowPriceModal(false)}
         onSuccess={handlePriceUpdate}
       />
+
+      <CourseCreateModal
+        isOpen={showCreateModal}
+        loading={createLoading}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCourseCreate}
+      />
+    </div>
+  )
+}
+
+// Course Creation Modal Component
+const CourseCreateModal = ({ isOpen, loading, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState({
+    Name: '',
+    title: '',
+    description: '',
+    long_description: '',
+    instructor_name: '',
+    instructor_title: '',
+    instructor_bio: '',
+    instructor_students: 0,
+    instructor_courses: 0,
+    price: 0,
+    category: '',
+    level: '',
+    thumbnail: '',
+    rating: 5,
+    enrollment_count: 0,
+    duration: 0
+  })
+
+  const [errors, setErrors] = useState({})
+
+  const categories = [
+    'Web Development',
+    'Data Science', 
+    'Design',
+    'Business',
+    'Photography',
+    'Music'
+  ]
+
+  const levels = ['beginner', 'intermediate', 'advanced']
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+    
+    // Clear error for this field
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: null
+      }))
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.Name.trim()) newErrors.Name = 'Course name is required'
+    if (!formData.title.trim()) newErrors.title = 'Course title is required'
+    if (!formData.description.trim()) newErrors.description = 'Description is required'
+    if (!formData.instructor_name.trim()) newErrors.instructor_name = 'Instructor name is required'
+    if (!formData.category) newErrors.category = 'Category is required'
+    if (!formData.level) newErrors.level = 'Level is required'
+    if (formData.price < 0) newErrors.price = 'Price must be 0 or greater'
+    if (formData.duration <= 0) newErrors.duration = 'Duration must be greater than 0'
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      toast.error('Please fix the form errors before submitting')
+      return
+    }
+
+    onSubmit(formData)
+  }
+
+  const resetForm = () => {
+    setFormData({
+      Name: '',
+      title: '',
+      description: '',
+      long_description: '',
+      instructor_name: '',
+      instructor_title: '',
+      instructor_bio: '',
+      instructor_students: 0,
+      instructor_courses: 0,
+      price: 0,
+      category: '',
+      level: '',
+      thumbnail: '',
+      rating: 5,
+      enrollment_count: 0,
+      duration: 0
+    })
+    setErrors({})
+  }
+
+  const handleClose = () => {
+    if (!loading) {
+      resetForm()
+      onClose()
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={handleClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Create New Course</h2>
+            <button
+              onClick={handleClose}
+              disabled={loading}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <ApperIcon name="X" size={24} />
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Course Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.Name}
+                  onChange={(e) => handleInputChange('Name', e.target.value)}
+                  placeholder="Enter course name"
+                  className={errors.Name ? 'border-red-500' : ''}
+                />
+                {errors.Name && <p className="text-red-500 text-sm mt-1">{errors.Name}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="title">Course Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  placeholder="Enter course title"
+                  className={errors.title ? 'border-red-500' : ''}
+                />
+                {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Description *</Label>
+              <Input
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Enter course description"
+                className={errors.description ? 'border-red-500' : ''}
+              />
+              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="long_description">Detailed Description</Label>
+              <textarea
+                id="long_description"
+                value={formData.long_description}
+                onChange={(e) => handleInputChange('long_description', e.target.value)}
+                placeholder="Enter detailed course description"
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+
+            {/* Instructor Information */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4">Instructor Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="instructor_name">Instructor Name *</Label>
+                  <Input
+                    id="instructor_name"
+                    value={formData.instructor_name}
+                    onChange={(e) => handleInputChange('instructor_name', e.target.value)}
+                    placeholder="Enter instructor name"
+                    className={errors.instructor_name ? 'border-red-500' : ''}
+                  />
+                  {errors.instructor_name && <p className="text-red-500 text-sm mt-1">{errors.instructor_name}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="instructor_title">Instructor Title</Label>
+                  <Input
+                    id="instructor_title"
+                    value={formData.instructor_title}
+                    onChange={(e) => handleInputChange('instructor_title', e.target.value)}
+                    placeholder="Enter instructor title"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <Label htmlFor="instructor_bio">Instructor Bio</Label>
+                <textarea
+                  id="instructor_bio"
+                  value={formData.instructor_bio}
+                  onChange={(e) => handleInputChange('instructor_bio', e.target.value)}
+                  placeholder="Enter instructor bio"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Course Details */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4">Course Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="category">Category *</Label>
+                  <select
+                    id="category"
+                    value={formData.category}
+                    onChange={(e) => handleInputChange('category', e.target.value)}
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.category ? 'border-red-500' : ''}`}
+                  >
+                    <option value="">Select category</option>
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                  {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="level">Level *</Label>
+                  <select
+                    id="level"
+                    value={formData.level}
+                    onChange={(e) => handleInputChange('level', e.target.value)}
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${errors.level ? 'border-red-500' : ''}`}
+                  >
+                    <option value="">Select level</option>
+                    {levels.map(level => (
+                      <option key={level} value={level}>{level}</option>
+                    ))}
+                  </select>
+                  {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="price">Price ($)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
+                    placeholder="0.00"
+                    className={errors.price ? 'border-red-500' : ''}
+                  />
+                  {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="duration">Duration (hours) *</Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    min="0.5"
+                    step="0.5"
+                    value={formData.duration}
+                    onChange={(e) => handleInputChange('duration', parseFloat(e.target.value) || 0)}
+                    placeholder="Enter duration in hours"
+                    className={errors.duration ? 'border-red-500' : ''}
+                  />
+                  {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="thumbnail">Thumbnail URL</Label>
+                  <Input
+                    id="thumbnail"
+                    value={formData.thumbnail}
+                    onChange={(e) => handleInputChange('thumbnail', e.target.value)}
+                    placeholder="Enter thumbnail image URL"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex items-center justify-end space-x-3 pt-6 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="min-w-[120px]"
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating...
+                  </div>
+                ) : (
+                  'Create Course'
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
